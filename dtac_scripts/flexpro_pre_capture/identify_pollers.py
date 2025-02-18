@@ -15,22 +15,14 @@ from .common import print_report
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
 # ----------------------------------------------------------------------------------------
-POLLERS_LIST = (
-	## # 'rlpv12148.gcsc.att.com',    ###  Issue with this poller, Do not use.
-	'rlpv12149.gcsc.att.com',  
-	'rlpv12150.gcsc.att.com',  
-	'rlpv12151.gcsc.att.com',  
-	'rlpv12152.gcsc.att.com',  
-)
-POLLER_TYPE = 'terminal_server'
-
 
 # ----------------------------------------------------------------------------------------
 #  Class that defines an object and property for action_info retrival 
 # ----------------------------------------------------------------------------------------
 @dataclass
-class ActionPollers():                                # Instance variables....
+class ActionPollers():
 	server_auth_user: str                             # login username (att uid)
+	servers_list: list = field(default_factory=[])    # List of available servers....
 	devices: list = field(default_factory=[])         # list of devices (Either - JDM/JZZ )
 	server: str = ''                                  # Server from where action_info to be initiated (default first from servers list)
 	server_auth_pass: str=''                          # Server authentication Method1: static password (RSA Token) 
@@ -38,7 +30,6 @@ class ActionPollers():                                # Instance variables....
 	passphrase: str=''
 
 	## class variable
-	servers_list = POLLERS_LIST
 	banner = 'action-info'
 
 	def __post_init__(self):	
@@ -46,6 +37,7 @@ class ActionPollers():                                # Instance variables....
 		self.conn = None
 		self.display_progress = True
 		self.devices_report = {}
+		self.servers_type = 'terminal_server'                   ## Default
 		if not self.server: self.server = self.servers_list[0]
 		self._set_jump_server_initial_parameters()
 
@@ -58,7 +50,7 @@ class ActionPollers():                                # Instance variables....
 
 	def _set_jump_server_initial_parameters(self):
 		self.jump_server_parameters = {
-			'ip': self.server, 'device_type': POLLER_TYPE, 
+			'ip': self.server, 'device_type': self.servers_type, 
 			'username': self.server_auth_user, 'password': self.server_auth_pass, 'key_file': self.server_auth_psk,
 			'port': 22, 'passphrase': self.passphrase
 		}

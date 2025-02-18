@@ -153,7 +153,8 @@ class FlexLogin():
 			command = f"ssh {device}\n"
 		#
 		for x in range(3):
-			self.write_debug_log(f"Connecting to device {device}, attempt {x+1}", pfx="[+]")
+			attempt = f"attempt {x+1}" if x > 0 else ""
+			self.write_debug_log(f"Connecting to device {device}, {attempt}", pfx="[+]")
 			self.write_debug_log(f"SENDING CMD >>>>\n{command}", pfx="[+]", onscreen=False)
 			current_prompt = self.find_prompt()
 			self.write_channel(command)
@@ -229,12 +230,13 @@ class FlexLogin():
 			self.write_debug_log(f"No Login User Prompt appeared")
 		##
 		new_prompt = self.find_prompt()
-		if new_prompt.strip().find("edge") > -1:
+		if new_prompt.strip().find("edge") > -1 or new_prompt.strip().find("active") > -1 or new_prompt.strip().find("stand") > -1:
 			self.redispatch(device_type)
 			self.write_debug_log(f"connected to device with custom string {login_string}")
 			return {'connected': True, 'prompt': new_prompt}
 		else:
 			self.write_debug_log(f"connection failed to device with custom string {login_string}", pfx="[-]")
+			self.write_debug_log(f"appeared prompt was {new_prompt}", pfx="[-]")
 			return {'connected': False, 'prompt': False}
 
 	## ~~~~~~~~~~~~~~~~~~~~~~~~ Commands ~~~~~~~~~~~~~~~~~~~~~~~~ ##

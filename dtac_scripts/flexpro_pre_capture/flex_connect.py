@@ -8,9 +8,8 @@ from nettoolkit.nettoolkit_common import Multi_Execution, create_folders
 from nettoolkit.nettoolkit_common import print_banner as display_banner
 from dataclasses import dataclass, field
 from collections import OrderedDict
-from pathlib import Path
 
-from .flex_login import FlexLogin
+from .flex_login import FlexLogin, cmd_output_to_file
 from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_report
 from .validations import InteractiveOutputValidators, ExternalOutputValidators, Interface_Output_Capture_Validations, InterfaceOutputValidators
 
@@ -34,8 +33,6 @@ class DeviceCapture():
 		self.pc_jcp = True
 		self.pc_nmte = True
 		self.pc_velovm = True
-		self.p = Path(self.output_file)
-		self.output_file_html = str(self.p.parent.joinpath(self.p.stem + ".html"))
 		self.captures_report_dict = OrderedDict()
 		self.captures_report_dict['Status'] = 'Not Initiated'
 		self.captures_report_dict['JDM'] = 'Not Initiated'
@@ -54,6 +51,8 @@ class DeviceCapture():
 
 			# 2.1 JDM CLI Captures 
 			mode = 'shell'
+			if self.output_file:
+				cmd_output_to_file(" // JDM SHELL // ", output="", file=self.output_file)
 			op_dict = self.get_commands_output_dict(dev='JDM', mode=mode, at_prompt=jdm_shell_connection['prompt'])
 			self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 
@@ -63,6 +62,8 @@ class DeviceCapture():
 
 				# 2.2.1 JDM CLI Captures
 				mode = 'cli'
+				if self.output_file:
+					cmd_output_to_file(" // JDM CLI // ", output="", file=self.output_file)
 				op_dict = self.get_commands_output_dict(dev='JDM', mode=mode, at_prompt=jdm_cli_connection['prompt'])
 				self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 				self.captures_report_dict['JDM'] = 'OK'
@@ -90,7 +91,6 @@ class DeviceCapture():
 				self.FL.exit()                                 ## /// exit from jdm shell
 			except OSError:
 				self.write_debug_log(f"Premature Exited", pfx="[-]", onscreen=True)
-
 		else:
 			pass
 
@@ -184,6 +184,8 @@ class DeviceCapture():
 		## Captures from CLI ##
 		if jcp_cli_connection['connected']:
 			mode = 'cli'
+			if self.output_file:
+				cmd_output_to_file(" // JCP - SWITCH CLI // ", output="", file=self.output_file)
 			op_dict = self.get_commands_output_dict(dev='JCP', mode=mode, at_prompt=jcp_cli_connection['prompt'])
 			self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 			# ------------------------------------------------------------------------------------------------------ #
@@ -230,6 +232,8 @@ class DeviceCapture():
 		## Captures from CLI ##
 		if nmte_cli_connection['connected']:
 			mode = 'cli'
+			if self.output_file:
+				cmd_output_to_file(" // NMTE CLI // ", output="", file=self.output_file)
 			op_dict = self.get_commands_output_dict(dev='NMTE', mode=mode, at_prompt=nmte_cli_connection['prompt'])
 			self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 			self.captures_report_dict['NMTE'] = 'OK'
@@ -253,6 +257,8 @@ class DeviceCapture():
 		#
 		if velo_console['connected']:
 			mode = 'shell'                          ## default
+			if self.output_file:
+				cmd_output_to_file(" // VELO VM CONSOLE // ", output="", file=self.output_file)
 			op_dict = self.FL.execute_commands(self.commands[vnf_type][mode], at_prompt=velo_console['prompt'])
 			self.FL.captured_outputs[vnf_type][mode].update()
 			self.captures_report_dict['VNF-VRT'] = 'OK'

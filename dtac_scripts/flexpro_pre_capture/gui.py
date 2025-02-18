@@ -128,6 +128,11 @@ def pc_start_executor(obj, i):
 			print("")
 			return None
 
+		if not i['pollers_list']:
+			print("[-] Mandatory Input missing Pollers(s) List")
+			print("")
+			return None
+
 		# -----------------------------------------------------
 		#  START EXECUTIONS
 		# -----------------------------------------------------
@@ -145,6 +150,7 @@ def pc_start_executor(obj, i):
 		# ---------- 1. Identify device ips
 		AP = ActionPollers(
 			devices          = i['pc_device_list'].splitlines(),
+			servers_list     = i['pollers_list'].splitlines(),
 			server_auth_user = DYN_VARS['attuid'],
 			server_auth_psk  = DYN_VARS['key_file_1024bit'],
 			passphrase       = i['pc_passphrase'],

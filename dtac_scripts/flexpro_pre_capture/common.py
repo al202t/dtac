@@ -5,7 +5,6 @@
 # ----------------------------------------------------------------------------------------
 import pandas as pd
 from tabulate import tabulate
-from colorama import Fore
 from nettoolkit.nettoolkit_db import write_to_xl
 
 
@@ -182,6 +181,7 @@ def print_report(result, tablefmt=None, color='magenta'):
 	if len(df.columns) > len(df): df = df.T
 	printable = tabulate(df, headers='keys', tablefmt=tablefmt)
 	print(printable)
+	print("")
 
 # write device summary result to csv file at given output path
 def write_csv(result, output_path="."):
