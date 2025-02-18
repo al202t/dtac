@@ -10,7 +10,7 @@ from collections import OrderedDict
 from time import sleep
 from nettoolkit.nettoolkit_common import print_banner as display_banner
 
-from .common import print_banner, print_report
+from .common import print_report
 
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
@@ -155,7 +155,7 @@ class ActionPollers():                                # Instance variables....
 	def print_message(self, msg):
 		if not self.display_progress: return
 		color = 'red' if msg[0:3] == "[-]" else 'blue'
-		print_banner(msg, color)
+		print(msg)
 
 	# object instance property that returns all devices, ip, and its pollers in list of dict.
 	# Pollers are chose round robin base.

@@ -1,7 +1,5 @@
 """ Define common functions/classes which cannot be uniquely categorized anywhere else
 """
-FILE_VERSION = 1.0
-
 # ----------------------------------------------------------------------------------------
 #  Imports
 # ----------------------------------------------------------------------------------------
@@ -29,17 +27,6 @@ INTERFACE_SUMMARY_REPORT_FILE_COLS = ['oper status', 'speed', 'duplex', 'auto_ne
 CSV_REPORT_FILE_NAME = "CSV Summary Report.csv"
 INTERFACE_SUMMARY_REPORT_FILE_NAME = "Interfaces Summary Report.xlsx"
 CMDS_EXEC_SUMMARY_REPORT_FILE_NAME = "Commands Execution Summary Report.xlsx"
-FORE_CLR = {
-	'cyan': Fore.CYAN,
-	'green': Fore.GREEN,
-	'blue': Fore.BLUE,
-	'yellow': Fore.YELLOW,
-	'red': Fore.RED,
-	'white': Fore.WHITE,
-	None: Fore.WHITE,
-	'black': Fore.BLACK,
-	'magenta': Fore.MAGENTA,
-}
 # ----------------------------------------------------------------------------------------
 #  Some common Functions
 # ----------------------------------------------------------------------------------------
@@ -87,21 +74,15 @@ def pull_variables(cred_file):
 			exec(s)															## pull un, pws defined in creds.txt
 		except:
 			# pass
-			print_banner("[-] variable pull failed for: " + l)
+			print("[-] variable pull failed for: " + l)
 
 	return creds_variables
 
 # reads mentioned commands file  an convert its content to dictionary format
 def pull_cmds_lists_dict(pre_capture_command_file):
-	# try:
 	tfc = text_file_content(pre_capture_command_file)
 	DEVICE_TYPE_TO_CMDS_DICT_MAP =  get_cmds_dict(tfc)
-		     ## all commands from commands file
-	# )
 	return DEVICE_TYPE_TO_CMDS_DICT_MAP
-	# except:
-	# 	print_banner(f"[-] Mandatory variable missing or incorrect content in creds.txt = {pre_capture_command_file}")
-	# 	return ''
 
 # ------------------------ [ OPERATIONS ] ------------------------ #
 
@@ -200,12 +181,11 @@ def print_report(result, tablefmt=None, color='magenta'):
 	df = pd.DataFrame(result).fillna("")
 	if len(df.columns) > len(df): df = df.T
 	printable = tabulate(df, headers='keys', tablefmt=tablefmt)
-	print_banner(printable, color=color)
-	print_banner("", color='white')
+	print(printable)
 
 # write device summary result to csv file at given output path
 def write_csv(result, output_path="."):
-	print_banner(f"[+] Preparing CSV Report...")
+	print(f"[+] Preparing CSV Report...")
 	report_cols = CSV_REPORT_COLS
 	## retrive string to write to
 	s = ""
@@ -225,14 +205,14 @@ def write_csv(result, output_path="."):
 			s += value
 		s += "\n"
 	## write out
-	print_banner(f"[+] Writing CSV Report...")
+	print(f"[+] Writing CSV Report...")
 	with open(f"{output_path}/{CSV_REPORT_FILE_NAME}", 'w') as f:
 		f.write(s)
-	print_banner(f"[+] Writing CSV Report Completed...")
+	print(f"[+] Writing CSV Report Completed...")
 
 # write interfaces summary results to excel file at given output path.
 def write_interface_summary(device_int_dict, output_path='.'):
-	print_banner(f"[+] Preparing Interfaces Summary Report...")
+	print(f"[+] Preparing Interfaces Summary Report...")
 	rows = INTERFACE_SUMMARY_REPORT_FILE_ROWS
 	cols = INTERFACE_SUMMARY_REPORT_FILE_COLS
 	file = f"{output_path}/{INTERFACE_SUMMARY_REPORT_FILE_NAME}"
@@ -244,41 +224,14 @@ def write_interface_summary(device_int_dict, output_path='.'):
 			d[k] = df
 		except:
 			d[k] = pd.DataFrame({'Result': ['Error',]})
-	print_banner(f"\n[+] Writing Interfaces Summary Report...")
+	print(f"\n[+] Writing Interfaces Summary Report...")
 	write_to_xl(file, d, index=True, overwrite=False)
 
 # write commands execution summary results to excel file at given output path.
 def write_cmd_exec_summary(devices_command_exec_summary, output_path='.'):
-	print_banner(f"\n[+] Writing Command Execution Summary Report...")
+	print(f"\n[+] Writing Command Execution Summary Report...")
 	file = f"{output_path}/{CMDS_EXEC_SUMMARY_REPORT_FILE_NAME}"
 	write_to_xl(file, {'CmdExecSummary': pd.DataFrame(devices_command_exec_summary).fillna('')}, index=True, overwrite=False)
-
-def html_file_header(device, file):
-	s = """
-<!DOCTYPE html>
-<html><body>
-<h1>{device}</h1>
-"""
-	with open(file, 'w') as f:
-		f.write(s)
-
-def html_file_footer(file):
-	s = """
-</body></html>
-"""
-	with open(file, 'a') as f:
-		f.write(s)
-
-# --------------------------------- [COLORAMA ]  --------------------------------- #
-def print_banner(banner, color=''):
-	if FILE_VERSION < 2.0:
-		print(banner)
-	else:
-		if not color:
-			color = None
-			if banner.startswith("[-]"): color = 'red'
-			if banner.startswith("[+]"): color = 'green'
-		print(FORE_CLR[color] + banner)
 
 # ----------------------------------------------------------------------------------------
 
