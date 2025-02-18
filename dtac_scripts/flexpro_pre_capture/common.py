@@ -7,13 +7,9 @@ import pandas as pd
 from tabulate import tabulate
 from colorama import Fore
 from nettoolkit.nettoolkit_db import write_to_xl
-#
-try:
-	from .colorprint import print_banner
-except:
-	def print_banner(banner, color=None):
-		print(banner)
-#
+
+from .colorprint import print_banner
+
 
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
@@ -86,15 +82,9 @@ def pull_variables(cred_file):
 
 # reads mentioned commands file  an convert its content to dictionary format
 def pull_cmds_lists_dict(pre_capture_command_file):
-	# try:
 	tfc = text_file_content(pre_capture_command_file)
 	DEVICE_TYPE_TO_CMDS_DICT_MAP =  get_cmds_dict(tfc)
-		     ## all commands from commands file
-	# )
 	return DEVICE_TYPE_TO_CMDS_DICT_MAP
-	# except:
-	# 	print_banner(f"[-] Mandatory variable missing or incorrect content in creds.txt = {pre_capture_command_file}")
-	# 	return ''
 
 # ------------------------ [ OPERATIONS ] ------------------------ #
 
@@ -245,7 +235,6 @@ def write_cmd_exec_summary(devices_command_exec_summary, output_path='.'):
 	print_banner(f"\n[+] Writing Command Execution Summary Report...")
 	file = f"{output_path}/{CMDS_EXEC_SUMMARY_REPORT_FILE_NAME}"
 	write_to_xl(file, {'CmdExecSummary': pd.DataFrame(devices_command_exec_summary).fillna('')}, index=True, overwrite=False)
-
 
 # ----------------------------------------------------------------------------------------
 
