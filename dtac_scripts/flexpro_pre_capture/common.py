@@ -1,7 +1,5 @@
 """ Define common functions/classes which cannot be uniquely categorized anywhere else
 """
-FILE_VERSION = 1.0
-
 # ----------------------------------------------------------------------------------------
 #  Imports
 # ----------------------------------------------------------------------------------------
@@ -9,7 +7,13 @@ import pandas as pd
 from tabulate import tabulate
 from colorama import Fore
 from nettoolkit.nettoolkit_db import write_to_xl
-
+#
+try:
+	from .colorprint import print_banner
+except:
+	def print_banner(banner, color=None):
+		print(banner)
+#
 
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
@@ -29,17 +33,6 @@ INTERFACE_SUMMARY_REPORT_FILE_COLS = ['oper status', 'speed', 'duplex', 'auto_ne
 CSV_REPORT_FILE_NAME = "CSV Summary Report.csv"
 INTERFACE_SUMMARY_REPORT_FILE_NAME = "Interfaces Summary Report.xlsx"
 CMDS_EXEC_SUMMARY_REPORT_FILE_NAME = "Commands Execution Summary Report.xlsx"
-FORE_CLR = {
-	'cyan': Fore.CYAN,
-	'green': Fore.GREEN,
-	'blue': Fore.BLUE,
-	'yellow': Fore.YELLOW,
-	'red': Fore.RED,
-	'white': Fore.WHITE,
-	None: Fore.WHITE,
-	'black': Fore.BLACK,
-	'magenta': Fore.MAGENTA,
-}
 # ----------------------------------------------------------------------------------------
 #  Some common Functions
 # ----------------------------------------------------------------------------------------
@@ -268,17 +261,6 @@ def html_file_footer(file):
 """
 	with open(file, 'a') as f:
 		f.write(s)
-
-# --------------------------------- [COLORAMA ]  --------------------------------- #
-def print_banner(banner, color=''):
-	if FILE_VERSION < 2.0:
-		print(banner)
-	else:
-		if not color:
-			color = None
-			if banner.startswith("[-]"): color = 'red'
-			if banner.startswith("[+]"): color = 'green'
-		print(FORE_CLR[color] + banner)
 
 # ----------------------------------------------------------------------------------------
 
