@@ -124,6 +124,7 @@ class DeviceCapture():
 			self.FL.interactive_command_evaluator = InteractiveOutputValidators
 			self.FL.instance_identifier = self.device
 			self.FL.output_file = self.output_file
+			self.FL.output_file_html = self.output_file_html
 			self.FL.debug = self.debug
 		except:
 			self.write_debug_log(f"Unable to set Server {self.poller} Initial Parameters", pfx="[-]", onscreen=True)
