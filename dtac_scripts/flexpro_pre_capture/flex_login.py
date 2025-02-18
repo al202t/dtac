@@ -10,11 +10,7 @@ import netmiko
 from time import sleep
 from collections import OrderedDict
 
-try:
-	from .save_to_html import cmd_output_to_html_file
-	HTML_OUTPUT = True
-except:
-	HTML_OUTPUT = False
+from .save_to_html import cmd_output_to_html_file
 
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
@@ -159,7 +155,8 @@ class FlexLogin():
 			command = f"ssh {device}\n"
 		#
 		for x in range(3):
-			self.write_debug_log(f"Connecting to device {device}, attempt {x+1}", pfx="[+]")
+			attempt = f"attempt {x+1}" if x > 0 else ""
+			self.write_debug_log(f"Connecting to device {device}, {attempt}", pfx="[+]")
 			self.write_debug_log(f"SENDING CMD >>>>\n{command}", pfx="[+]", onscreen=False)
 			current_prompt = self.find_prompt()
 			self.write_channel(command)
@@ -235,12 +232,13 @@ class FlexLogin():
 			self.write_debug_log(f"No Login User Prompt appeared")
 		##
 		new_prompt = self.find_prompt()
-		if new_prompt.strip().find("edge") > -1:
+		if new_prompt.strip().find("edge") > -1 or new_prompt.strip().find("active") > -1 or new_prompt.strip().find("stand") > -1:
 			self.redispatch(device_type)
 			self.write_debug_log(f"connected to device with custom string {login_string}")
 			return {'connected': True, 'prompt': new_prompt}
 		else:
 			self.write_debug_log(f"connection failed to device with custom string {login_string}", pfx="[-]")
+			self.write_debug_log(f"appeared prompt was {new_prompt}", pfx="[-]")
 			return {'connected': False, 'prompt': False}
 
 	## ~~~~~~~~~~~~~~~~~~~~~~~~ Commands ~~~~~~~~~~~~~~~~~~~~~~~~ ##
@@ -259,8 +257,7 @@ class FlexLogin():
 					command_exec_dict[cmd] = self.get_output(cmd)
 					if self.output_file:
 						cmd_output_to_file(cmd, output=command_exec_dict[cmd], file=self.output_file)
-						if HTML_OUTPUT:
-							cmd_output_to_html_file(cmd, output=command_exec_dict[cmd], file=self.output_file+".html")
+						cmd_output_to_html_file(cmd, output=command_exec_dict[cmd], file=self.output_file+".html")
 					self.run_command_evaluator(cmd, command_exec_dict[cmd])
 					cmd_exec = True
 					self.command_exec_summary[cmd] = 'Success'

@@ -6,7 +6,7 @@
 import pandas as pd
 from tabulate import tabulate
 from nettoolkit.nettoolkit_db import write_to_xl
-#
+
 
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
@@ -82,7 +82,6 @@ def pull_cmds_lists_dict(pre_capture_command_file):
 	tfc = text_file_content(pre_capture_command_file)
 	DEVICE_TYPE_TO_CMDS_DICT_MAP =  get_cmds_dict(tfc)
 	return DEVICE_TYPE_TO_CMDS_DICT_MAP
-
 
 # ------------------------ [ OPERATIONS ] ------------------------ #
 
@@ -181,7 +180,8 @@ def print_report(result, tablefmt=None, color='magenta'):
 	df = pd.DataFrame(result).fillna("")
 	if len(df.columns) > len(df): df = df.T
 	printable = tabulate(df, headers='keys', tablefmt=tablefmt)
-	print(printable, color=color)
+	print(printable)
+	print("")
 
 # write device summary result to csv file at given output path
 def write_csv(result, output_path="."):
@@ -232,22 +232,6 @@ def write_cmd_exec_summary(devices_command_exec_summary, output_path='.'):
 	print(f"\n[+] Writing Command Execution Summary Report...")
 	file = f"{output_path}/{CMDS_EXEC_SUMMARY_REPORT_FILE_NAME}"
 	write_to_xl(file, {'CmdExecSummary': pd.DataFrame(devices_command_exec_summary).fillna('')}, index=True, overwrite=False)
-
-def html_file_header(device, file):
-	s = """
-<!DOCTYPE html>
-<html><body>
-<h1>{device}</h1>
-"""
-	with open(file, 'w') as f:
-		f.write(s)
-
-def html_file_footer(file):
-	s = """
-</body></html>
-"""
-	with open(file, 'a') as f:
-		f.write(s)
 
 # ----------------------------------------------------------------------------------------
 
