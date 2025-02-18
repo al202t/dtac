@@ -314,12 +314,6 @@ class DeviceCapture():
 
 # ========================================== ========================================== #
 
-# def capture_output(poller, device, device_ip, passphrase, output_file, dyn_vars, commands, debug):
-# 	FL.bye()
-# 	return FL, captures_report_dict
-
-
-
 # ------------------------------------------------------------------------------------------------------------------
 #  Multithreaded Flex Connect and Capture class
 # ------------------------------------------------------------------------------------------------------------------
