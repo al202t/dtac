@@ -5,7 +5,6 @@
 # ----------------------------------------------------------------------------------------
 import pandas as pd
 from tabulate import tabulate
-from colorama import Fore
 from nettoolkit.nettoolkit_db import write_to_xl
 
 
