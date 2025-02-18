@@ -153,7 +153,8 @@ class FlexLogin():
 			command = f"ssh {device}\n"
 		#
 		for x in range(3):
-			self.write_debug_log(f"Connecting to device {device}, attempt {x+1}", pfx="[+]")
+			attempt = f"attempt {x+1}" if x > 0 else ""
+			self.write_debug_log(f"Connecting to device {device}, {attempt}", pfx="[+]")
 			self.write_debug_log(f"SENDING CMD >>>>\n{command}", pfx="[+]", onscreen=False)
 			current_prompt = self.find_prompt()
 			self.write_channel(command)
