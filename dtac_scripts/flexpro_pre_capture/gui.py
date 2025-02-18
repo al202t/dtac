@@ -23,6 +23,16 @@ OUTPUT_FOLDER = 'C:/NFV-PreCheck'
 # -----------------------------------------------------------------------------------
 
 def dtac_pre_capture():
+	devices_col = sg.Column([
+		[sg.Text("Device(s) List", text_color="black"),], 
+		[sg.Multiline("", key='pc_device_list', autoscroll=True, size=(30,6), disabled=False),],
+	], pad=0)
+	pollers_col = sg.Column([
+		[sg.Text("Pollers(s) List", text_color="black"),], 
+		[sg.Multiline("", key='pc_pollers_list', autoscroll=True, size=(30,6), disabled=False),],
+	], pad=0)
+
+
 	return sg.Frame(title=None, 
 					relief=sg.RELIEF_SUNKEN, 
 					layout=[
@@ -41,8 +51,9 @@ def dtac_pre_capture():
 		 sg.FolderBrowse(button_color="orange"), 
 		 sg.Button("open", change_submits=True, key='pc_output_path_open', button_color="darkgrey"),
 		],
-		[sg.Text("Device(s) List", text_color="black"),], 
-		[sg.Multiline("", key='pc_device_list', autoscroll=True, size=(30,6), disabled=False),],
+		#
+		[pollers_col, sg.VerticalSeparator(), devices_col],
+		#
 		[sg.Text("Public Key Pass-phrase", text_color="black"), sg.InputText("", password_char='*', key='pc_passphrase', size=(15,1)),],
 		[sg.Text('Concurrent connections throttle', text_color="black"), 
 		 sg.InputText(50,  key='pc_max_connections', size=(5,1) ), sg.Text('Use 1 for sequential', text_color="white"), 
@@ -62,23 +73,23 @@ def dtac_pre_capture():
 
 # ---------------------------------- #
 #         EVENT UPDATERS             #
-#   list down variables which triggers an event function call -- exec_fn(i)
+#   list down variables which triggers an event function call -- exec_fn(obj, i)
 # ---------------------------------------------------------------------------------------
-EVENT_UPDATORS = {'pc_start',}
+FPC_EVENT_UPDATORS = {'pc_start',}
 # ---------------------------------------------------------------------------------------
 
 # --------------------------------------- #
 #         EVENT ITEM UPDATERS             #
-#   list down variables which triggers an item update event function -- exec_fn(obj, i)
+#   list down variables which triggers an item update event function -- exec_fn(obj, i, event)
 # ---------------------------------------------------------------------------------------
-EVENT_ITEM_UPDATORS = set()
+FPC_EVENT_ITEM_UPDATORS = set()
 
 
 # ---------------------------------- #
 #        RETRACTABLE KEYS            #
 #  sets of retractable variables , which should be cleared up on clicking clear button
 # ---------------------------------------------------------------------------------------
-RETRACTABLES = { 'pc_passphrase', 'pc_device_list',}
+FPC_RETRACTABLES = { 'pc_passphrase', 'pc_device_list',}
 
 
 # ---------------------------------- #
@@ -94,8 +105,8 @@ FPC_FRAMES_GRP = {
 # ---------------------------------------------------------------------------------------
 #   Creating 'Buttons' and ascociate each with a group name
 # ---------------------------------------------------------------------------------------
-BUTTUN_PALLETE_DIC = OrderedDict()
-BUTTUN_PALLETE_DIC["btn_grp_precap"] = {'key': 'btn1',  'frames': FPC_FRAMES_GRP,  "button_name": "Pre-Captures"}
+FPC_BUTTUN_PALLETE_DIC = OrderedDict()
+FPC_BUTTUN_PALLETE_DIC["btn_grp_precap"] = {'key': 'btn1',  'frames': FPC_FRAMES_GRP,  "button_name": "Pre-Captures"}
 # ... Add more buttons as necessary
 
 
@@ -128,7 +139,7 @@ def pc_start_executor(obj, i):
 			print("")
 			return None
 
-		if not i['pollers_list']:
+		if not i['pc_pollers_list']:
 			print("[-] Mandatory Input missing Pollers(s) List")
 			print("")
 			return None
@@ -150,7 +161,7 @@ def pc_start_executor(obj, i):
 		# ---------- 1. Identify device ips
 		AP = ActionPollers(
 			devices          = i['pc_device_list'].splitlines(),
-			servers_list     = i['pollers_list'].splitlines(),
+			servers_list     = i['pc_pollers_list'].splitlines(),
 			server_auth_user = DYN_VARS['attuid'],
 			server_auth_psk  = DYN_VARS['key_file_1024bit'],
 			passphrase       = i['pc_passphrase'],
@@ -199,9 +210,6 @@ def exec_pc_cmds_file_open(i):
 def exec_pc_output_path_open(i):
 	if i['pc_output_path']:
 		open_folder(i['pc_output_path'])
-def exec_cmp_json_pc_output_path_open(i):
-	if i['cmp_json_pc_output_path']:
-		open_folder(i['cmp_json_pc_output_path'])
 
 
 # ================================== #
@@ -217,3 +225,8 @@ FPC_EVENT_FUNCTIONS = {
 	'pc_cmds_file_open': exec_pc_cmds_file_open,
 	'pc_output_path_open': exec_pc_output_path_open,
 }
+
+# ================================================================================
+if __name__ == "__main__":
+	pass
+# ================================================================================
