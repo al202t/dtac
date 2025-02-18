@@ -10,7 +10,6 @@ import netmiko
 from time import sleep
 from collections import OrderedDict
 
-from .common import print_banner
 try:
 	from .save_to_html import cmd_output_to_html_file
 	HTML_OUTPUT = True
@@ -318,7 +317,7 @@ class FlexLogin():
 				prompt = self.find_prompt()
 			except:
 				break
-			if display_change: print_banner(prompt)
+			if display_change: print(prompt)
 			if prompt == 'logout':
 				self.write_debug_log(f"logout success")
 				break
@@ -327,7 +326,7 @@ class FlexLogin():
 	# print and/or write log message ( debug write controlled via local debug variable )
 	def write_debug_log(self, msg, pfx="[+]", onscreen=True):
 		s = f"{pfx} {self.instance_identifier}: {msg}"
-		if onscreen: print_banner(s)
+		if onscreen: print(s)
 		if self.debug:
 			with open(f"{self.output_file}-debug.log", 'a') as f:
 				f.write(s)

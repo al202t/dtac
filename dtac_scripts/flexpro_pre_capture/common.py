@@ -6,6 +6,7 @@
 import pandas as pd
 from tabulate import tabulate
 from nettoolkit.nettoolkit_db import write_to_xl
+#
 
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
@@ -72,21 +73,16 @@ def pull_variables(cred_file):
 			exec(s)															## pull un, pws defined in creds.txt
 		except:
 			# pass
-			print_banner("[-] variable pull failed for: " + l)
+			print("[-] variable pull failed for: " + l)
 
 	return creds_variables
 
 # reads mentioned commands file  an convert its content to dictionary format
 def pull_cmds_lists_dict(pre_capture_command_file):
-	# try:
 	tfc = text_file_content(pre_capture_command_file)
 	DEVICE_TYPE_TO_CMDS_DICT_MAP =  get_cmds_dict(tfc)
-		     ## all commands from commands file
-	# )
 	return DEVICE_TYPE_TO_CMDS_DICT_MAP
-	# except:
-	# 	print_banner(f"[-] Mandatory variable missing or incorrect content in creds.txt = {pre_capture_command_file}")
-	# 	return ''
+
 
 # ------------------------ [ OPERATIONS ] ------------------------ #
 
@@ -185,12 +181,11 @@ def print_report(result, tablefmt=None, color='magenta'):
 	df = pd.DataFrame(result).fillna("")
 	if len(df.columns) > len(df): df = df.T
 	printable = tabulate(df, headers='keys', tablefmt=tablefmt)
-	print_banner(printable, color=color)
-	print_banner("", color='white')
+	print(printable, color=color)
 
 # write device summary result to csv file at given output path
 def write_csv(result, output_path="."):
-	print_banner(f"[+] Preparing CSV Report...")
+	print(f"[+] Preparing CSV Report...")
 	report_cols = CSV_REPORT_COLS
 	## retrive string to write to
 	s = ""
@@ -210,14 +205,14 @@ def write_csv(result, output_path="."):
 			s += value
 		s += "\n"
 	## write out
-	print_banner(f"[+] Writing CSV Report...")
+	print(f"[+] Writing CSV Report...")
 	with open(f"{output_path}/{CSV_REPORT_FILE_NAME}", 'w') as f:
 		f.write(s)
-	print_banner(f"[+] Writing CSV Report Completed...")
+	print(f"[+] Writing CSV Report Completed...")
 
 # write interfaces summary results to excel file at given output path.
 def write_interface_summary(device_int_dict, output_path='.'):
-	print_banner(f"[+] Preparing Interfaces Summary Report...")
+	print(f"[+] Preparing Interfaces Summary Report...")
 	rows = INTERFACE_SUMMARY_REPORT_FILE_ROWS
 	cols = INTERFACE_SUMMARY_REPORT_FILE_COLS
 	file = f"{output_path}/{INTERFACE_SUMMARY_REPORT_FILE_NAME}"
@@ -229,12 +224,12 @@ def write_interface_summary(device_int_dict, output_path='.'):
 			d[k] = df
 		except:
 			d[k] = pd.DataFrame({'Result': ['Error',]})
-	print_banner(f"\n[+] Writing Interfaces Summary Report...")
+	print(f"\n[+] Writing Interfaces Summary Report...")
 	write_to_xl(file, d, index=True, overwrite=False)
 
 # write commands execution summary results to excel file at given output path.
 def write_cmd_exec_summary(devices_command_exec_summary, output_path='.'):
-	print_banner(f"\n[+] Writing Command Execution Summary Report...")
+	print(f"\n[+] Writing Command Execution Summary Report...")
 	file = f"{output_path}/{CMDS_EXEC_SUMMARY_REPORT_FILE_NAME}"
 	write_to_xl(file, {'CmdExecSummary': pd.DataFrame(devices_command_exec_summary).fillna('')}, index=True, overwrite=False)
 
