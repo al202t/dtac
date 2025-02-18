@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from collections import OrderedDict
 
 from .flex_login import FlexLogin
-from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_banner, print_report, html_file_header, html_file_footer
+from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_report
 from .validations import InteractiveOutputValidators, ExternalOutputValidators, Interface_Output_Capture_Validations, InterfaceOutputValidators
 
 
@@ -302,7 +302,7 @@ class DeviceCapture():
 	# print and/or write log message ( debug write controlled via local debug variable)
 	def write_debug_log(self, msg, pfx="[+]", onscreen=True):
 		s = f"{pfx} {self.device}: {msg}"
-		if onscreen: print_banner(s)
+		if onscreen: print(s)
 		if self.debug:
 			with open(f"{self.output_file}-debug.log", 'a') as f:
 				f.write(s)
@@ -383,7 +383,7 @@ class FlxConnectCapture(Multi_Execution):
 			self.devices_reports[device].update(captures_report_dict)
 		else:
 			self.devices_reports[device] = {'Hostname':device, 'Status': "Not Accessible"}
-			print_banner(f"[-] {device}: Unable to Access Device.")
+			print(f"[-] {device}: Unable to Access Device.")
 
 		if FL.command_exec_summary:
 			self.devices_command_exec_summary[device] = FL.command_exec_summary
@@ -433,20 +433,20 @@ class FlxConnectCapture(Multi_Execution):
 		try:
 			write_csv(self.devices_reports, output_path=self.output_path)
 		except:
-			print_banner(f"[-] Writing CSV Report Failed...")
+			print(f"[-] Writing CSV Report Failed...")
 
 
 	def write_interface_summary(self):
 		try:
 			write_interface_summary(self.devices_interface_reports, output_path=self.output_path)
 		except:
-			print_banner(f"[-] Writing Interface Summary Report Failed...")
+			print(f"[-] Writing Interface Summary Report Failed...")
 
 	def write_cmd_exec_summary(self):
 		try:
 			write_cmd_exec_summary(self.devices_command_exec_summary, output_path=self.output_path)
 		except:
-			print_banner(f"[-] Writing Command Execution Summary Report Failed...")
+			print(f"[-] Writing Command Execution Summary Report Failed...")
 
 # ------------------------------------------------------------------------------------------------------------------
 #  main

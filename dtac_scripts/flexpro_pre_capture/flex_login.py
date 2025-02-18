@@ -10,8 +10,6 @@ import netmiko
 from time import sleep
 from collections import OrderedDict
 
-from .common import print_banner
-
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
 # ----------------------------------------------------------------------------------------
@@ -26,19 +24,6 @@ CTRL_C = '\003'
 def cmd_output_to_file(cmd, output, file):
 	dbl_line = f"# {'='*80}\n"
 	s = f"\n{dbl_line}# Output For command: {cmd}\n{dbl_line}\n{output}\n"
-	with open(file, 'a') as f:
-		f.write(s)
-
-# writes provided command and its output to given file (append mode)
-def cmd_output_to_html_file(cmd, output, file):
-	s = f"""
-<details>
-<summary>{cmd}</summary>
-<pre>
-{output}
-</pre>
-</details>
-"""
 	with open(file, 'a') as f:
 		f.write(s)
 
@@ -159,7 +144,6 @@ class FlexLogin():
 	# connecting to device, manipulate delays if disconnect happen prematurely
 	def connect_device(self, device, username, password, device_type='', pass_prompt_delay=5, device_login_delay=1):
 		self.device = device
-		html_file_header(device)
 		self.captured_outputs[self.device] = {"shell": {}}
 		if username:
 			self.ping_device(device)
@@ -269,7 +253,6 @@ class FlexLogin():
 					command_exec_dict[cmd] = self.get_output(cmd)
 					if self.output_file:
 						cmd_output_to_file(cmd, output=command_exec_dict[cmd], file=self.output_file)
-						cmd_output_to_html_file(cmd, output=command_exec_dict[cmd], file=self.output_file+".html")
 					self.run_command_evaluator(cmd, command_exec_dict[cmd])
 					cmd_exec = True
 					self.command_exec_summary[cmd] = 'Success'
@@ -326,7 +309,7 @@ class FlexLogin():
 				prompt = self.find_prompt()
 			except:
 				break
-			if display_change: print_banner(prompt)
+			if display_change: print(prompt)
 			if prompt == 'logout':
 				self.write_debug_log(f"logout success")
 				break
@@ -335,7 +318,7 @@ class FlexLogin():
 	# print and/or write log message ( debug write controlled via local debug variable )
 	def write_debug_log(self, msg, pfx="[+]", onscreen=True):
 		s = f"{pfx} {self.instance_identifier}: {msg}"
-		if onscreen: print_banner(s)
+		if onscreen: print(s)
 		if self.debug:
 			with open(f"{self.output_file}-debug.log", 'a') as f:
 				f.write(s)
