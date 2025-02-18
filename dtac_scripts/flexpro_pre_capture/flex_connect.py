@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from collections import OrderedDict
 
 from .flex_login import FlexLogin
-from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_banner, print_report, html_file_header, html_file_footer
+from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_banner, print_report
 from .validations import InteractiveOutputValidators, ExternalOutputValidators, Interface_Output_Capture_Validations, InterfaceOutputValidators
 
 
@@ -48,8 +48,6 @@ class DeviceCapture():
 		# 2 JDM Shell Login 
 		jdm_shell_connection = self.connect_to_jdm()
 		if jdm_shell_connection['connected']:
-
-			# html_file_header(self.device, file=self.output_file+".html")
 
 			# 2.1 JDM CLI Captures 
 			mode = 'shell'
@@ -89,8 +87,6 @@ class DeviceCapture():
 				self.FL.exit()                                 ## /// exit from jdm shell
 			except OSError:
 				self.write_debug_log(f"Premature Exited", pfx="[-]", onscreen=True)
-
-			# html_file_footer(file=self.output_file+".html")
 
 		else:
 			pass

@@ -29,19 +29,6 @@ def cmd_output_to_file(cmd, output, file):
 	with open(file, 'a') as f:
 		f.write(s)
 
-# writes provided command and its output to given file (append mode)
-def cmd_output_to_html_file(cmd, output, file):
-	s = f"""
-<details>
-<summary>{cmd}</summary>
-<pre>
-{output}
-</pre>
-</details>
-"""
-	with open(file, 'a') as f:
-		f.write(s)
-
 # ------------------------------------------------------------------------------------------------------
 #   FLEX LOGIN BASE CLASS
 # ------------------------------------------------------------------------------------------------------
@@ -159,7 +146,6 @@ class FlexLogin():
 	# connecting to device, manipulate delays if disconnect happen prematurely
 	def connect_device(self, device, username, password, device_type='', pass_prompt_delay=5, device_login_delay=1):
 		self.device = device
-		html_file_header(device)
 		self.captured_outputs[self.device] = {"shell": {}}
 		if username:
 			self.ping_device(device)
@@ -269,7 +255,6 @@ class FlexLogin():
 					command_exec_dict[cmd] = self.get_output(cmd)
 					if self.output_file:
 						cmd_output_to_file(cmd, output=command_exec_dict[cmd], file=self.output_file)
-						cmd_output_to_html_file(cmd, output=command_exec_dict[cmd], file=self.output_file+".html")
 					self.run_command_evaluator(cmd, command_exec_dict[cmd])
 					cmd_exec = True
 					self.command_exec_summary[cmd] = 'Success'
