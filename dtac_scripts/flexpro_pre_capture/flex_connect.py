@@ -13,7 +13,7 @@ from pathlib import Path
 from .flex_login import FlexLogin, cmd_output_to_file
 from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_report
 from .validations import InteractiveOutputValidators, ExternalOutputValidators, Interface_Output_Capture_Validations, InterfaceOutputValidators
-from .save_to_html import html_file_header, html_file_footer
+from .save_to_html import html_file_header, html_file_footer, html_file_h2_header
 
 
 # ------------------------------------------------------------------------------------------------------------------
@@ -59,6 +59,7 @@ class DeviceCapture():
 			mode = 'shell'
 			if self.output_file:
 				cmd_output_to_file(" // JDM SHELL // ", output="", file=self.output_file)
+				html_file_h2_header(" // JDM SHELL // ", file=self.output_file_html)
 			op_dict = self.get_commands_output_dict(dev='JDM', mode=mode, at_prompt=jdm_shell_connection['prompt'])
 			self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 
@@ -70,6 +71,7 @@ class DeviceCapture():
 				mode = 'cli'
 				if self.output_file:
 					cmd_output_to_file(" // JDM CLI // ", output="", file=self.output_file)
+					html_file_h2_header(" // JDM CLI // ", file=self.output_file_html)
 				op_dict = self.get_commands_output_dict(dev='JDM', mode=mode, at_prompt=jdm_cli_connection['prompt'])
 				self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 				self.captures_report_dict['JDM'] = 'OK'
@@ -196,6 +198,7 @@ class DeviceCapture():
 			mode = 'cli'
 			if self.output_file:
 				cmd_output_to_file(" // JCP - SWITCH CLI // ", output="", file=self.output_file)
+				html_file_h2_header(" // JCP - SWITCH CLI // ", file=self.output_file_html)
 			op_dict = self.get_commands_output_dict(dev='JCP', mode=mode, at_prompt=jcp_cli_connection['prompt'])
 			self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 			# ------------------------------------------------------------------------------------------------------ #
@@ -244,6 +247,7 @@ class DeviceCapture():
 			mode = 'cli'
 			if self.output_file:
 				cmd_output_to_file(" // NMTE CLI // ", output="", file=self.output_file)
+				html_file_h2_header(" // NMTE CLI // ", file=self.output_file_html)
 			op_dict = self.get_commands_output_dict(dev='NMTE', mode=mode, at_prompt=nmte_cli_connection['prompt'])
 			self.FL.captured_outputs[self.device_ip][mode].update(op_dict)
 			self.captures_report_dict['NMTE'] = 'OK'
@@ -269,6 +273,7 @@ class DeviceCapture():
 			mode = 'shell'                          ## default
 			if self.output_file:
 				cmd_output_to_file(" // VELO VM CONSOLE // ", output="", file=self.output_file)
+				html_file_h2_header(" // VELO VM CONSOLE // ", file=self.output_file_html)
 			op_dict = self.FL.execute_commands(self.commands[vnf_type][mode], at_prompt=velo_console['prompt'])
 			self.FL.captured_outputs[vnf_type][mode].update()
 			self.captures_report_dict['VNF-VRT'] = 'OK'

@@ -19,6 +19,13 @@ def html_file_header(device, file):
 	with open(file, 'w') as f:
 		f.write(s)
 
+def html_file_h2_header(item, file):
+	s = f"""
+<h2>{item}</h2>
+"""
+	with open(file, 'a') as f:
+		f.write(s)
+
 
 # writes provided command and its output to given file (append mode)
 def cmd_output_to_html_file(cmd, output, file):
