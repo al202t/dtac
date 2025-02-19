@@ -319,11 +319,11 @@ class DeviceCapture():
 # ------------------------------------------------------------------------------------------------------------------
 class FlxConnectCapture(Multi_Execution):
 
-	output_path = "."
 	banner = 'FlexConnect'
 
 	def __init__(self, AP):
 		display_banner(self.banner, 'green')
+		self.output_path = "."
 		self.AP = AP		
 		super().__init__(self.AP.dict_info)              ## Initialize with list of [{device, device_ip , server}, ]
 		self.devices_reports = {}
@@ -430,20 +430,20 @@ class FlxConnectCapture(Multi_Execution):
 
 	def write_csv(self):
 		try:
-			write_csv(self.devices_reports, output_path=self.output_path)
+			write_csv(self.devices_reports, self.output_csv_report_file)
 		except:
 			print(f"[-] Writing CSV Report Failed...")
 
 
 	def write_interface_summary(self):
 		try:
-			write_interface_summary(self.devices_interface_reports, output_path=self.output_path)
+			write_interface_summary(self.devices_interface_reports, self.output_intf_summary_report_file)
 		except:
 			print(f"[-] Writing Interface Summary Report Failed...")
 
 	def write_cmd_exec_summary(self):
 		try:
-			write_cmd_exec_summary(self.devices_command_exec_summary, output_path=self.output_path)
+			write_cmd_exec_summary(self.devices_command_exec_summary, self.output_cmds_exec_summary_report_file)
 		except:
 			print(f"[-] Writing Command Execution Summary Report Failed...")
 
