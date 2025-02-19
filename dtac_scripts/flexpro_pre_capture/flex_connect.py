@@ -320,6 +320,13 @@ class DeviceCapture():
 class FlxConnectCapture(Multi_Execution):
 
 	banner = 'FlexConnect'
+	INTERFACE_SUMMARY_REPORT_FILE_ROWS_SEQ = [
+		'ge-0/0/0', 'ge-0/0/1', 'ge-0/0/2', 'ge-0/0/3', 'ge-0/0/4', 'ge-0/0/5', 'ge-0/0/6', 'ge-0/0/7', 
+		'ge-0/0/8', 'ge-0/0/9', 'ge-0/0/10', 'ge-0/0/11'
+	]
+	INTERFACE_SUMMARY_REPORT_FILE_COLS_SEQ = [
+		'oper status', 'speed', 'duplex', 'auto_neg', 'mode', 'vlans', 'HA Neighbor'
+	]
 
 	def __init__(self, AP):
 		display_banner(self.banner, 'green')
@@ -400,8 +407,7 @@ class FlxConnectCapture(Multi_Execution):
 		return validation_dict
 
 	# a device interfaces variables validations
-	@staticmethod
-	def int_var_validator(output_file):
+	def int_var_validator(self, output_file):
 		int_validation_dict = {}
 		IOCV = Interface_Output_Capture_Validations()
 		for cmd, fn in InterfaceOutputValidators.items():
@@ -413,7 +419,15 @@ class FlxConnectCapture(Multi_Execution):
 		flatten_int_para_dict.update(IOCV.wan_connected_interfaces)
 		int_para_dict = IOCV.interfaces_parameter_dict
 		int_to_sys_para = IOCV.get_interfaces_to_system_para_dict()
+		self.add_additional_interface_validation_columns(IOCV)
 		return flatten_int_para_dict, int_para_dict, int_to_sys_para
+
+	def add_additional_interface_validation_columns(self, IOCV):
+		validation_cols = set(IOCV.INTERFACE_SUMMARY_REPORT_FILE_COLS)
+		_sequenced_cols = set(self.INTERFACE_SUMMARY_REPORT_FILE_COLS_SEQ)
+		missing_cols = validation_cols - _sequenced_cols 
+		if missing_cols:
+			self.INTERFACE_SUMMARY_REPORT_FILE_COLS_SEQ.add(missing_cols)
 
 	### Reports write ###
 	def reports_gen(self):
@@ -437,7 +451,9 @@ class FlxConnectCapture(Multi_Execution):
 
 	def write_interface_summary(self):
 		try:
-			write_interface_summary(self.devices_interface_reports, self.output_intf_summary_report_file)
+			write_interface_summary(self.devices_interface_reports, self.output_intf_summary_report_file,
+				rows=self.INTERFACE_SUMMARY_REPORT_FILE_ROWS_SEQ, cols=self.INTERFACE_SUMMARY_REPORT_FILE_COLS_SEQ
+			)
 		except:
 			print(f"[-] Writing Interface Summary Report Failed...")
 

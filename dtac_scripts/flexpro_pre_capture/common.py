@@ -17,10 +17,6 @@ CSV_REPORT_COLS = [                                                        ## CS
 	"Wan Interfaces (UP)", "Lan Interfaces (UP)",
 	"HA Port VLANS", "HA Neighbor", "WAN VLANS", "Remarks"
 ]                                                                          ## columns mentioned here only will appear in output
-INTERFACE_SUMMARY_REPORT_FILE_ROWS = ['ge-0/0/0', 'ge-0/0/1', 'ge-0/0/2', 'ge-0/0/3', 
-	'ge-0/0/4', 'ge-0/0/5', 'ge-0/0/6', 'ge-0/0/7', 'ge-0/0/8', 'ge-0/0/9', 'ge-0/0/10', 'ge-0/0/11'
-]
-INTERFACE_SUMMARY_REPORT_FILE_COLS = ['oper status', 'speed', 'duplex', 'auto_neg', 'mode', 'vlans', 'HA Neighbor']
 # ----------------------------------------------------------------------------------------
 #  Some common Functions
 # ----------------------------------------------------------------------------------------
@@ -206,10 +202,8 @@ def write_csv(result, output_csv_report_file):
 	print(f"[+] Writing CSV Report Completed...")
 
 # write interfaces summary results to excel file at given output path.
-def write_interface_summary(device_int_dict, output_intf_summary_report_file):
+def write_interface_summary(device_int_dict, output_intf_summary_report_file, rows=[], cols=[]):
 	print(f"[+] Preparing Interfaces Summary Report...")
-	rows = INTERFACE_SUMMARY_REPORT_FILE_ROWS
-	cols = INTERFACE_SUMMARY_REPORT_FILE_COLS
 	d = {}
 	for k, v in device_int_dict.items():
 		try:

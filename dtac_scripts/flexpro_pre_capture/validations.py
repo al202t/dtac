@@ -123,6 +123,7 @@ class Interface_Output_Capture_Validations():
 
 	wan_intfs = WAN_INTFS
 	lan_intfs = LAN_INTFS
+	INTERFACE_SUMMARY_REPORT_FILE_COLS = ['oper status', 'speed', 'duplex', 'auto_neg', 'mode', 'vlans', 'HA Neighbor']
 
 	def __init__(self):
 		self.int_para_dict = OrderedDict()
