@@ -21,6 +21,20 @@ OUTPUT_FOLDER = 'C:/NFV-PreCheck'
 #  Define all your frames here 
 # -----------------------------------------------------------------------------------
 
+def dtac_pre_capture_options():
+	return sg.Frame(title=None, 
+					relief=sg.RELIEF_SUNKEN, 
+					layout=[
+
+		[sg.Text('Options',  font=('TimesNewRoman', 12), text_color="orange"),], 
+		[sg.Text("Output CSV File\t\t",       text_color="black"), sg.InputText("", key='pc_op_csv_file', size=(25,1)),],
+		[sg.Text("Interfaces Summary File\t", text_color="black"), sg.InputText("", key='pc_op_int_summary_file', size=(25,1)),],
+		[sg.Text("Command Execution File\t",  text_color="black"), sg.InputText("", key='pc_op_int_cmd_exec_file', size=(25,1)),],
+
+		under_line(80),
+	])
+
+
 def dtac_pre_capture():
 	devices_col = sg.Column([
 		[sg.Text("Device(s) List", text_color="black"),], 
@@ -97,6 +111,7 @@ FPC_RETRACTABLES = { 'pc_passphrase', 'pc_device_list',}
 # ---------------------------------------------------------------------------------------
 FPC_FRAMES_GRP = {
 	'DTAC Pre Captures': dtac_pre_capture(),
+	'Options': dtac_pre_capture_options()
 }
 
 # ... Add more Frame_Groups as necessary
