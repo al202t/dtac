@@ -11,21 +11,7 @@ from nettoolkit.nettoolkit_db import write_to_xl
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
 # ----------------------------------------------------------------------------------------
-pre_capture_command_file = "flexware_pre_capture_commands_file_multi"      ##  File name only without extension
-# GS = "\x1D"                                                              ## hex code of CTRL+"]"
-CSV_REPORT_COLS = [                                                        ## CSV File Columns Sequence
-	"Hostname", "Status", "Device Serial Number", "JDM", "JCP", "NMTE", "VNF-VRT", 
-	"Junos Version", "Junos Version Status", "Image Availability (Junos 22.4R2-S2.6)", "MD5 Check (22.4R2-S2.6)", 
-	"Wan Interfaces (UP)", "Lan Interfaces (UP)",
-	"HA Port VLANS", "HA Neighbor", "WAN VLANS", "Remarks"
-]                                                                          ## columns mentioned here only will appear in output
-INTERFACE_SUMMARY_REPORT_FILE_ROWS = ['ge-0/0/0', 'ge-0/0/1', 'ge-0/0/2', 'ge-0/0/3', 
-	'ge-0/0/4', 'ge-0/0/5', 'ge-0/0/6', 'ge-0/0/7', 'ge-0/0/8', 'ge-0/0/9', 'ge-0/0/10', 'ge-0/0/11'
-]
-INTERFACE_SUMMARY_REPORT_FILE_COLS = ['oper status', 'speed', 'duplex', 'auto_neg', 'mode', 'vlans', 'HA Neighbor']
-CSV_REPORT_FILE_NAME = "CSV Summary Report.csv"
-INTERFACE_SUMMARY_REPORT_FILE_NAME = "Interfaces Summary Report.xlsx"
-CMDS_EXEC_SUMMARY_REPORT_FILE_NAME = "Commands Execution Summary Report.xlsx"
+
 # ----------------------------------------------------------------------------------------
 #  Some common Functions
 # ----------------------------------------------------------------------------------------
@@ -184,9 +170,13 @@ def print_report(result, tablefmt=None, color='magenta'):
 	print("")
 
 # write device summary result to csv file at given output path
-def write_csv(result, output_path="."):
+def write_csv(result, output_csv_report_file, report_cols=[]):
 	print(f"[+] Preparing CSV Report...")
-	report_cols = CSV_REPORT_COLS
+	## Add all columns if report_cols is missing
+	if not report_cols: 
+		for _, device_objects_dict in result.items():			
+			report_cols = device_objects_dict.keys()
+			break
 	## retrive string to write to
 	s = ""
 	header = ",".join(report_cols)
@@ -206,16 +196,13 @@ def write_csv(result, output_path="."):
 		s += "\n"
 	## write out
 	print(f"[+] Writing CSV Report...")
-	with open(f"{output_path}/{CSV_REPORT_FILE_NAME}", 'w') as f:
+	with open(output_csv_report_file, 'w') as f:
 		f.write(s)
 	print(f"[+] Writing CSV Report Completed...")
 
 # write interfaces summary results to excel file at given output path.
-def write_interface_summary(device_int_dict, output_path='.'):
+def write_interface_summary(device_int_dict, output_intf_summary_report_file, rows=[], cols=[]):
 	print(f"[+] Preparing Interfaces Summary Report...")
-	rows = INTERFACE_SUMMARY_REPORT_FILE_ROWS
-	cols = INTERFACE_SUMMARY_REPORT_FILE_COLS
-	file = f"{output_path}/{INTERFACE_SUMMARY_REPORT_FILE_NAME}"
 	d = {}
 	for k, v in device_int_dict.items():
 		try:
@@ -224,14 +211,14 @@ def write_interface_summary(device_int_dict, output_path='.'):
 			d[k] = df
 		except:
 			d[k] = pd.DataFrame({'Result': ['Error',]})
-	print(f"\n[+] Writing Interfaces Summary Report...")
-	write_to_xl(file, d, index=True, overwrite=False)
+	print(f"[+] Writing Interfaces Summary Report...")
+	write_to_xl(output_intf_summary_report_file, d, index=True, overwrite=False)
 
 # write commands execution summary results to excel file at given output path.
-def write_cmd_exec_summary(devices_command_exec_summary, output_path='.'):
-	print(f"\n[+] Writing Command Execution Summary Report...")
-	file = f"{output_path}/{CMDS_EXEC_SUMMARY_REPORT_FILE_NAME}"
-	write_to_xl(file, {'CmdExecSummary': pd.DataFrame(devices_command_exec_summary).fillna('')}, index=True, overwrite=False)
+def write_cmd_exec_summary(devices_command_exec_summary, output_cmds_exec_summary_report_file):
+	print(f"[+] Writing Command Execution Summary Report...")
+	write_to_xl(output_cmds_exec_summary_report_file, 
+		{'CmdExecSummary': pd.DataFrame(devices_command_exec_summary).fillna('')}, index=True, overwrite=False)
 
 # ----------------------------------------------------------------------------------------
 

@@ -30,8 +30,6 @@ def dtac_pre_capture():
 		[sg.Text("Pollers(s) List", text_color="black"),], 
 		[sg.Multiline("", key='pc_pollers_list', autoscroll=True, size=(30,6), disabled=False),],
 	], pad=0)
-
-
 	return sg.Frame(title=None, 
 					relief=sg.RELIEF_SUNKEN, 
 					layout=[
@@ -43,7 +41,7 @@ def dtac_pre_capture():
 	    ],
 		[sg.Text('Commands file:\t', text_color="black"), 
 	     sg.InputText(get_cache(CACHE_FILE, 'pc_cmds_file'), size=(30,1),  key='pc_cmds_file', change_submits=True,), 
-	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='pc_pc_cmds_file_open', button_color="darkgrey"),
+	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='pc_cmds_file_open', button_color="darkgrey"),
 	    ],
 		[sg.Text('output folder:\t', text_color="black"), 
 		 sg.InputText(OUTPUT_FOLDER, key='pc_output_path', size=(30,1)),  
@@ -60,7 +58,7 @@ def dtac_pre_capture():
 		[sg.Checkbox('JCP', key='pc_jcp', default=True, text_color='black'),
 		 sg.Checkbox('NMTE', key='pc_nmte', default=True, text_color='black'),
 		 sg.Checkbox('VeloVM', key='pc_velovm', default=True, text_color='black'),
-		 sg.Checkbox('FlexConnect Summary', key='pc_fc_summary', default=False, text_color='black'),
+		 sg.Checkbox('FlexConnect Summary', key='pc_fc_summary', default=True, text_color='black'),
 		 sg.Checkbox('Debug', key='pc_debug', default=False, text_color='black'),
 		],
 		under_line(80),
@@ -154,41 +152,63 @@ def pc_start_executor(obj, i):
 		CAPTURED_DATE_TIME = str(dt.datetime.today()).split(".")[0].replace(":", ".") 
 		CAPTURED_DATE = CAPTURED_DATE_TIME.split()[0]
 		CAPTURED_TIME = CAPTURED_DATE_TIME.split()[1][:5] + " LT"
-		OUTPUT_PATH = i['pc_output_path'] + '/' + CAPTURED_DATE + '/' + CAPTURED_TIME
+		op_folder = get_output_folder(i)
+		OUTPUT_PATH = f"{op_folder}/{CAPTURED_DATE}/{CAPTURED_TIME}"
 		obj.event_update_element(pc_output_path={'value': OUTPUT_PATH})	
+		CSV_REPORT_FILE_NAME = f"{OUTPUT_PATH}/{obj.custom_var_dict['CSV_REPORT_FILE_NAME']}"
+		INTERFACE_SUMMARY_REPORT_FILE_NAME = f"{OUTPUT_PATH}/{obj.custom_var_dict['INTERFACE_SUMMARY_REPORT_FILE_NAME']}"
+		CMDS_EXEC_SUMMARY_REPORT_FILE_NAME = f"{OUTPUT_PATH}/{obj.custom_var_dict['CMDS_EXEC_SUMMARY_REPORT_FILE_NAME']}"
+		CSV_REPORT_COLS_SEQ = obj.custom_var_dict['CSV_REPORT_COLS_SEQ']
 
-		# ---------- 1. Identify device ips
-		AP = ActionPollers(
-			devices          = i['pc_device_list'].splitlines(),
-			servers_list     = i['pc_pollers_list'].splitlines(),
-			server_auth_user = DYN_VARS['attuid'],
-			server_auth_psk  = DYN_VARS['key_file_1024bit'],
-			passphrase       = i['pc_passphrase'],
-		)
-		AP()
-		AP.exit()
-		AP.print_summary_report()
+		try:
+			# ---------- 1. Identify device ips
+			AP = ActionPollers(
+				devices          = i['pc_device_list'].splitlines(),
+				servers_list     = i['pc_pollers_list'].splitlines(),
+				server_auth_user = DYN_VARS['attuid'],
+				server_auth_psk  = DYN_VARS['key_file_1024bit'],
+				passphrase       = i['pc_passphrase'],
+			)
+			AP()
+			AP.exit()
+			AP.print_summary_report()
+		except Exception as e:
+			print(f"[-] Error Accessing Poller..\n{e}")
+			return
 
-		# ----------- 2. Define Capture Parameters
-		FCC = FlxConnectCapture(AP)
-		FCC.dyn_vars = DYN_VARS
-		FCC.commands = COMMANDS
-		FCC.output_path = OUTPUT_PATH
-		FCC.max_connections = int(i['pc_max_connections'])
-		FCC.display_final_summary = i['pc_fc_summary']
-		FCC.pc_jcp = i['pc_jcp']
-		FCC.pc_nmte = i['pc_nmte']
-		FCC.pc_velovm = i['pc_velovm']
-		FCC.debug = i['pc_debug']
-		# ----------- 3. Capture
-		FCC()
-		# ----------- 4. Gen Reports
-		FCC.reports_gen()
+		try:
+			# ----------- 2. Define Capture Parameters
+			FCC = FlxConnectCapture(AP)
+			FCC.dyn_vars = DYN_VARS
+			FCC.commands = COMMANDS
+			FCC.output_path = OUTPUT_PATH
+			FCC.output_csv_report_file = CSV_REPORT_FILE_NAME
+			FCC.output_csv_report_file_col_seq = CSV_REPORT_COLS_SEQ
+			FCC.output_intf_summary_report_file = INTERFACE_SUMMARY_REPORT_FILE_NAME
+			FCC.output_cmds_exec_summary_report_file = CMDS_EXEC_SUMMARY_REPORT_FILE_NAME
+			FCC.max_connections = int(i['pc_max_connections'])
+			FCC.display_final_summary = i['pc_fc_summary']
+			FCC.pc_jcp = i['pc_jcp']
+			FCC.pc_nmte = i['pc_nmte']
+			FCC.pc_velovm = i['pc_velovm']
+			FCC.debug = i['pc_debug']
+			# ----------- 3. Capture
+			FCC()
+		except Exception as e:
+			print(f"[-] Error Capturing output..\n{e}")
+			return
 
-		print(f"[+] All Activity Finished", 'white')
+		try:
+			# ----------- 4. Gen Reports
+			FCC.reports_gen()
+		except Exception as e:
+			print(f"[-] Error while Generating Report..\n{e}")
+			return
+
+		print(f"[+] All Activity Finished")
 
 	except KeyboardInterrupt:
-		print(f"[-] Activity Cancelled", 'white')
+		print(f"[-] Activity Cancelled")
 
 
 # ================================== #
@@ -197,19 +217,33 @@ def pc_start_executor(obj, i):
 # ================================================================================
 
 def update_cache_pc(i):
-	update_cache(CACHE_FILE, pc_creds_file=i['pc_creds_file'])
-	update_cache(CACHE_FILE, pc_cmds_file=i['pc_cmds_file'])
-	update_cache(CACHE_FILE, cmp_json_pc_json_file=i['cmp_json_pc_json_file'])
-	update_cache(CACHE_FILE, cmp_json_pc_pc_files=i['cmp_json_pc_pc_files'])
+	try:
+		update_cache(CACHE_FILE, pc_creds_file=i['pc_creds_file'])
+		update_cache(CACHE_FILE, pc_cmds_file=i['pc_cmds_file'])
+		update_cache(CACHE_FILE, cmp_json_pc_json_file=i['cmp_json_pc_json_file'])
+		update_cache(CACHE_FILE, cmp_json_pc_pc_files=i['cmp_json_pc_pc_files'])
+	except:
+		pass
 
 def exec_pc_creds_file_open(i):
-	open_text_file(i['pc_creds_file'])
+	try:
+		open_text_file(i['pc_creds_file'])
+	except Exception as e:
+		print(f"[-] Unable to open file.")
+		return False
 def exec_pc_cmds_file_open(i):
-	open_text_file(i['pc_cmds_file'])
+	try:
+		open_text_file(i['pc_cmds_file'])
+	except Exception as e:
+		print(f"[-] Unable to open file.")
+		return False
 def exec_pc_output_path_open(i):
-	if i['pc_output_path']:
-		open_folder(i['pc_output_path'])
-
+	try:
+		if i['pc_output_path']:
+			open_folder(i['pc_output_path'])
+	except Exception as e:
+		print(f"[-] Unable to open folder.")
+		return False
 
 # ================================== #
 #   // EVENT_FUNCTIONS MAPPING  //   #
@@ -224,6 +258,17 @@ FPC_EVENT_FUNCTIONS = {
 	'pc_cmds_file_open': exec_pc_cmds_file_open,
 	'pc_output_path_open': exec_pc_output_path_open,
 }
+
+
+# ================================== #
+#   // Other Local Functions  //   #
+# ================================== #
+## Remove the trailing Date/Time stamp from the provided path.
+def get_output_folder(i):
+	if not i['pc_output_path']:  return "."
+	if i['pc_output_path'].endswith(" LT"):
+		return "/".join(i['pc_output_path'].split("/")[:-2])
+	return i['pc_output_path']
 
 # ================================================================================
 if __name__ == "__main__":
