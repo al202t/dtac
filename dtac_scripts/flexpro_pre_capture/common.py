@@ -11,12 +11,7 @@ from nettoolkit.nettoolkit_db import write_to_xl
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
 # ----------------------------------------------------------------------------------------
-CSV_REPORT_COLS = [                                                        ## CSV File Columns Sequence
-	"Hostname", "Status", "Device Serial Number", "JDM", "JCP", "NMTE", "VNF-VRT", 
-	"Junos Version", "Junos Version Status", "Image Availability (Junos 22.4R2-S2.6)", "MD5 Check (22.4R2-S2.6)", 
-	"Wan Interfaces (UP)", "Lan Interfaces (UP)",
-	"HA Port VLANS", "HA Neighbor", "WAN VLANS", "Remarks"
-]                                                                          ## columns mentioned here only will appear in output
+
 # ----------------------------------------------------------------------------------------
 #  Some common Functions
 # ----------------------------------------------------------------------------------------
@@ -175,9 +170,13 @@ def print_report(result, tablefmt=None, color='magenta'):
 	print("")
 
 # write device summary result to csv file at given output path
-def write_csv(result, output_csv_report_file):
+def write_csv(result, output_csv_report_file, report_cols=[]):
 	print(f"[+] Preparing CSV Report...")
-	report_cols = CSV_REPORT_COLS
+	## Add all columns if report_cols is missing
+	if not report_cols: 
+		for _, device_objects_dict in result.items():			
+			report_cols = device_objects_dict.keys()
+			break
 	## retrive string to write to
 	s = ""
 	header = ",".join(report_cols)

@@ -331,6 +331,10 @@ class FlxConnectCapture(Multi_Execution):
 	def __init__(self, AP):
 		display_banner(self.banner, 'green')
 		self.output_path = "."
+		self.output_csv_report_file = None
+		self.output_csv_report_file_col_seq=[]
+		self.output_intf_summary_report_file = None
+		self.output_cmds_exec_summary_report_file=None
 		self.AP = AP		
 		super().__init__(self.AP.dict_info)              ## Initialize with list of [{device, device_ip , server}, ]
 		self.devices_reports = {}
@@ -444,22 +448,27 @@ class FlxConnectCapture(Multi_Execution):
 
 	def write_csv(self):
 		try:
-			write_csv(self.devices_reports, self.output_csv_report_file)
+			if self.output_csv_report_file:
+				write_csv(self.devices_reports, self.output_csv_report_file, 
+					report_cols=self.output_csv_report_file_col_seq
+				)
 		except:
 			print(f"[-] Writing CSV Report Failed...")
 
 
 	def write_interface_summary(self):
 		try:
-			write_interface_summary(self.devices_interface_reports, self.output_intf_summary_report_file,
-				rows=self.INTERFACE_SUMMARY_REPORT_FILE_ROWS_SEQ, cols=self.INTERFACE_SUMMARY_REPORT_FILE_COLS_SEQ
-			)
+			if self.output_intf_summary_report_file:
+				write_interface_summary(self.devices_interface_reports, self.output_intf_summary_report_file,
+					rows=self.INTERFACE_SUMMARY_REPORT_FILE_ROWS_SEQ, cols=self.INTERFACE_SUMMARY_REPORT_FILE_COLS_SEQ
+				)
 		except:
 			print(f"[-] Writing Interface Summary Report Failed...")
 
 	def write_cmd_exec_summary(self):
 		try:
-			write_cmd_exec_summary(self.devices_command_exec_summary, self.output_cmds_exec_summary_report_file)
+			if self.output_cmds_exec_summary_report_file:
+				write_cmd_exec_summary(self.devices_command_exec_summary, self.output_cmds_exec_summary_report_file)
 		except:
 			print(f"[-] Writing Command Execution Summary Report Failed...")
 
