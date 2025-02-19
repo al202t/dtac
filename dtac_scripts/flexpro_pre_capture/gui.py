@@ -5,7 +5,6 @@
 import PySimpleGUI as sg
 from nettoolkit.nettoolkit.forms.formitems import *
 from nettoolkit.nettoolkit_common import open_text_file, open_folder
-from nettoolkit import NGui
 from collections import OrderedDict
 import datetime as dt
 
