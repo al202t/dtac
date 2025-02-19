@@ -48,7 +48,12 @@ def get_cmds_dict(lines):
 #   rest all indented lines will be considered as remarks.
 def pull_variables(cred_file):
 	creds_variables = {}
-	for l in text_file_content(cred_file): 
+	try:
+		tfc = text_file_content(cred_file)
+	except Exception as e:
+		print(f"[-] Creds File read error\n{e}")
+		return {}
+	for l in tfc: 
 		if l.startswith('Enter your credentials'): continue
 		line = l.lstrip()
 		if line != l: continue
@@ -65,8 +70,16 @@ def pull_variables(cred_file):
 
 # reads mentioned commands file  an convert its content to dictionary format
 def pull_cmds_lists_dict(pre_capture_command_file):
-	tfc = text_file_content(pre_capture_command_file)
-	DEVICE_TYPE_TO_CMDS_DICT_MAP =  get_cmds_dict(tfc)
+	try:
+		tfc = text_file_content(pre_capture_command_file)
+	except Exception as e:
+		print(f"[-] Commands File read error\n{e}")
+		return {}
+	try:
+		DEVICE_TYPE_TO_CMDS_DICT_MAP =  get_cmds_dict(tfc)
+	except Exception as e:
+		print(f"[-] Commands File data error\nPossible Reason incorrect format.\n{e}")
+		return {}
 	return DEVICE_TYPE_TO_CMDS_DICT_MAP
 
 # ------------------------ [ OPERATIONS ] ------------------------ #
