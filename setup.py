@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="att_dtac",
-    version="0.0.01",
+    version="0.0.02",
     author="ALIASGAR - ALI",
     author_email="aliasgar.lokhandwala@att.com",
     description="DTAC Engineering Team Tool Set",

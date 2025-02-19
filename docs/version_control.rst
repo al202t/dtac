@@ -15,6 +15,9 @@ version changes detail.
      - Date   
      - Updates
 
+   * - 0.0.02
+     - Feb 19, 2025
+     - Added: GUI Module for FlexPro-Pre-Capture
    * - 0.0.01
      - Feb 18, 2025
      - Initial Base version Rel. for NFV Migration Pre-Captures
