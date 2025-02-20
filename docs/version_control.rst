@@ -6,20 +6,19 @@ version changes detail.
 ----
 
 .. list-table:: Version updates
-   :widths: 7 12 70
+   :widths: 12 70
    :align: left
    :header-rows: 1
 
 
-   * - Version
-     - Date   
+   * - Date   
      - Updates
 
-   * - 0.0.02
-     - Feb 19, 2025
-     - Added: GUI Module for FlexPro-Pre-Capture
-   * - 0.0.01
-     - Feb 18, 2025
+   * - Feb 20, 2025
+     - Fix load Errors. Added: html output generation, Colorama effect.
+   * - Feb 19, 2025
+     - Added: GUI Module for FlexPro-Pre-Capture, passphrase acceptance for PSK authentication.
+   * - Feb 18, 2025
      - Initial Base version Rel. for NFV Migration Pre-Captures
 
 
