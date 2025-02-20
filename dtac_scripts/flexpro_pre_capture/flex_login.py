@@ -10,6 +10,8 @@ import netmiko
 from time import sleep
 from collections import OrderedDict
 
+from .save_to_html import cmd_output_to_html_file
+
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries
 # ----------------------------------------------------------------------------------------
@@ -51,6 +53,7 @@ class FlexLogin():
 		self.display_progress = True
 		self.interactive_command_evaluator = None
 		self.output_file = None
+		self.output_file_html = None
 		self.command_evaluation_results = {}
 		self.max_connections = 100
 		self.command_exec_summary = {}
@@ -255,6 +258,7 @@ class FlexLogin():
 					command_exec_dict[cmd] = self.get_output(cmd)
 					if self.output_file:
 						cmd_output_to_file(cmd, output=command_exec_dict[cmd], file=self.output_file)
+						cmd_output_to_html_file(cmd, output=command_exec_dict[cmd], file=self.output_file_html)
 					self.run_command_evaluator(cmd, command_exec_dict[cmd])
 					cmd_exec = True
 					self.command_exec_summary[cmd] = 'Success'
