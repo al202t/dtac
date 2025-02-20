@@ -20,10 +20,10 @@ class Mapper():
 
 	def map_device(self, json_device, capture_device):
 		if json_device not in self.json_devices:
-			print(f"[-] Invalid input: {json_device} not found in Json Devices - {json_devices}")
+			print(f"[-] Invalid input: {json_device} not found in Json Devices - {self.json_devices}")
 			return
 		if capture_device not in self.capture_devices:
-			print(f"[-] Invalid input: {capture_device} not found in Json Devices - {capture_devices}")
+			print(f"[-] Invalid input: {capture_device} not found in Json Devices - {self.capture_devices}")
 			return
 		self.hostnames_map[json_device] = capture_device
 
@@ -120,8 +120,8 @@ class Verify():
 		d = {'[+] matches':{}, '[-] issues':{}}
 		if para != 'uCPEImageFileName' : return {}
 		junos_image = device_dict['system_para_dict'][para]
-		self.dp.Devices[self.hostnames_map[device]].junos_image = junos_image
 		dev_obj = self.dp.Devices[self.hostnames_map[device]]
+		dev_obj.junos_image = junos_image
 		dev_obj.junos_available = dev_obj.is_junos_available()
 		dev_obj.junos_md5 = dev_obj.check_junos_md5()
 		if dev_obj.junos_available and dev_obj.junos_md5:

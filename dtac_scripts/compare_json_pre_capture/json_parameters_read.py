@@ -50,9 +50,9 @@ class JsonData():
 	def retrive_device_data_dict(self):
 		self.device_data_dict = {}
 		for device_dict in self.complete_data_dict['childItems']:
-			 system_para_dict = self.retrive_system_parameters(device_dict)
-			 _hostname = system_para_dict['uCPEHostName']
-			 self.device_data_dict[_hostname] = device_dict
+			system_para_dict = self.retrive_system_parameters(device_dict)
+			_hostname = system_para_dict['uCPEHostName']
+			self.device_data_dict[_hostname] = device_dict
 
 	def retrive_device_parameters(self, hostname, device_dict):
 		return {

@@ -45,6 +45,7 @@ class DevPara():
 		"show chassis hardware",
 		"file list /var/tmp detail",
 		"file checksum md5 /var/tmp/jinstall-host-nfx-3-x86-64-22.4R2-S2.6-secure-signed.tgz",
+		"file checksum md5 /var/tmp/jinstall-host-nfx-3-x86-64-22.4R2.8-secure-signed.tgz",
 		"show chassis hardware",
 		"show interfaces terse | no-more",
 		"show chassis hardware",
