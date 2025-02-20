@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.02",
     author="ALIASGAR - ALI",
     author_email="aliasgar.lokhandwala@att.com",
-    description="DTAC Enginnering Team Automations",
+    description="DTAC Engineering Team Tool Set",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/al202t/dtac",
