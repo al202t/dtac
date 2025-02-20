@@ -40,11 +40,11 @@ def dtac_compare_json_data():
 		[sg.Text('Compare Json Data with Pre-Captures',  font=('TimesNewRoman', 12), text_color="orange"),], 
 
 		[sg.Text('Json file:\t\t', text_color="black"), 
-	     sg.InputText(get_cache(CACHE_FILE, 'cj_json_file'), size=(30,1),  key='cj_json_file', change_submits=True,), 
+	     sg.InputText('', size=(30,1),  key='cj_json_file', change_submits=True,), 
 	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='cj_json_file_open', button_color="darkgrey"),
 	    ],
 		[sg.Text('Pre-Capture file(s):\t', text_color="black"), 
-	     sg.InputText(get_cache(CACHE_FILE, 'cj_devices_files'), size=(30,1),  key='cj_devices_files', change_submits=True, ), 
+	     sg.InputText('', size=(30,1),  key='cj_devices_files', change_submits=True, ), 
 	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='cj_devices_files_open', button_color="darkgrey"),
 	    ],
 		[sg.Text('output folder:\t', text_color="black"), 
@@ -61,9 +61,7 @@ def dtac_compare_json_data():
 		 sg.Checkbox('Save to File', key='cj_write', default=True, text_color='black'),
 		],
 		#
-		under_line(80),
 		[sg.Button("Compare", change_submits=True, key='cj_start')],
-		under_line(80),
 	])
 
 ## ... Define more as needed
