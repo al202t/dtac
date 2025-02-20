@@ -12,6 +12,7 @@ from pathlib import Path
 
 from .flex_login import FlexLogin, cmd_output_to_file
 from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_report
+from .colorprint import print_banner
 from .validations import InteractiveOutputValidators, ExternalOutputValidators, Interface_Output_Capture_Validations, InterfaceOutputValidators
 from .save_to_html import html_file_header, html_file_footer, html_file_h2_header
 
@@ -322,7 +323,7 @@ class DeviceCapture():
 	# print and/or write log message ( debug write controlled via local debug variable)
 	def write_debug_log(self, msg, pfx="[+]", onscreen=True):
 		s = f"{pfx} {self.device}: {msg}"
-		if onscreen: print(s)
+		if onscreen: print_banner(s)
 		if self.debug:
 			with open(f"{self.output_file}-debug.log", 'a') as f:
 				f.write(s)
@@ -408,7 +409,7 @@ class FlxConnectCapture(Multi_Execution):
 			self.devices_reports[device].update(captures_report_dict)
 		else:
 			self.devices_reports[device] = {'Hostname':device, 'Status': "Not Accessible"}
-			print(f"[-] {device}: Unable to Access Device.")
+			print_banner(f"[-] {device}: Unable to Access Device.")
 
 		if FL.command_exec_summary:
 			self.devices_command_exec_summary[device] = FL.command_exec_summary
@@ -468,7 +469,7 @@ class FlxConnectCapture(Multi_Execution):
 					report_cols=self.output_csv_report_file_col_seq
 				)
 		except:
-			print(f"[-] Writing CSV Report Failed...")
+			print_banner(f"[-] Writing CSV Report Failed...")
 
 
 	def write_interface_summary(self):
@@ -478,14 +479,14 @@ class FlxConnectCapture(Multi_Execution):
 					rows=self.INTERFACE_SUMMARY_REPORT_FILE_ROWS_SEQ, cols=self.INTERFACE_SUMMARY_REPORT_FILE_COLS_SEQ
 				)
 		except:
-			print(f"[-] Writing Interface Summary Report Failed...")
+			print_banner(f"[-] Writing Interface Summary Report Failed...")
 
 	def write_cmd_exec_summary(self):
 		try:
 			if self.output_cmds_exec_summary_report_file:
 				write_cmd_exec_summary(self.devices_command_exec_summary, self.output_cmds_exec_summary_report_file)
 		except:
-			print(f"[-] Writing Command Execution Summary Report Failed...")
+			print_banner(f"[-] Writing Command Execution Summary Report Failed...")
 
 # ------------------------------------------------------------------------------------------------------------------
 #  main

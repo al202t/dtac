@@ -11,6 +11,7 @@ import datetime as dt
 from .flex_connect import FlxConnectCapture
 from .identify_pollers import ActionPollers
 from .common import pull_variables, pull_cmds_lists_dict
+from .colorprint import print_banner
 
 # -----------------------------------------------------------------------------------
 #  Static 
@@ -127,24 +128,24 @@ def pc_start_executor(obj, i):
 		# -----------------------------------------------------
 		CRED_FILE = i['pc_creds_file']
 		if not CRED_FILE:
-			print("[-] Mandatory Input missing Creds file")
-			print("")
+			print_banner("[-] Mandatory Input missing Creds file")
+			print_banner("")
 			return None
 
 		COMMANDS_FILE = i['pc_cmds_file']
 		if not COMMANDS_FILE:
-			print("[-] Mandatory Input missing Commands file")
-			print("")
+			print_banner("[-] Mandatory Input missing Commands file")
+			print_banner("")
 			return None
 
 		if not i['pc_device_list']:
-			print("[-] Mandatory Input missing Device(s) List")
-			print("")
+			print_banner("[-] Mandatory Input missing Device(s) List")
+			print_banner("")
 			return None
 
 		if not i['pc_pollers_list']:
-			print("[-] Mandatory Input missing Pollers(s) List")
-			print("")
+			print_banner("[-] Mandatory Input missing Pollers(s) List")
+			print_banner("")
 			return None
 
 		# -----------------------------------------------------
@@ -180,7 +181,8 @@ def pc_start_executor(obj, i):
 			AP.exit()
 			AP.print_summary_report()
 		except Exception as e:
-			print(f"[-] Error Accessing Poller..\n{e}")
+			print_banner(f"[-] Error Accessing Poller..\n{e}")
+			print_banner("")
 			return
 
 		try:
@@ -202,20 +204,24 @@ def pc_start_executor(obj, i):
 			# ----------- 3. Capture
 			FCC()
 		except Exception as e:
-			print(f"[-] Error Capturing output..\n{e}")
+			print_banner(f"[-] Error Capturing output..\n{e}")
+			print_banner("")
 			return
 
 		try:
 			# ----------- 4. Gen Reports
 			FCC.reports_gen()
 		except Exception as e:
-			print(f"[-] Error while Generating Report..\n{e}")
+			print_banner(f"[-] Error while Generating Report..\n{e}")
+			print_banner("")
 			return
 
-		print(f"[+] All Activity Finished")
+		print_banner(f"[+] All Activity Finished")
+		print_banner("")
 
 	except KeyboardInterrupt:
-		print(f"[-] Activity Cancelled")
+		print_banner(f"[-] Activity Cancelled")
+		print_banner("")
 
 
 # ================================== #
