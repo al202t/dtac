@@ -2,7 +2,6 @@
 # -----------------------------------------------------------------------------------
 #  Import form items from nettoolkit
 # -----------------------------------------------------------------------------------
-from lib2to3.pgen2.token import COMMA
 import PySimpleGUI as sg
 from nettoolkit.nettoolkit.forms.formitems import *
 from nettoolkit.nettoolkit_common import open_text_file, open_folder
