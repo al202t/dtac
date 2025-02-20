@@ -12,6 +12,7 @@ from pathlib import Path
 
 from .flex_login import FlexLogin, cmd_output_to_file
 from .common import get_output_from_capture, write_csv, write_interface_summary, write_cmd_exec_summary, print_report
+from .colorprint import print_banner
 from .validations import InteractiveOutputValidators, ExternalOutputValidators, Interface_Output_Capture_Validations, InterfaceOutputValidators
 from .save_to_html import html_file_header, html_file_footer, html_file_h2_header
 

@@ -11,6 +11,7 @@ from time import sleep
 from nettoolkit.nettoolkit_common import print_banner as display_banner
 
 from .common import print_report
+from .colorprint import print_banner
 
 # ----------------------------------------------------------------------------------------
 #  Some PreDefined Static Entries

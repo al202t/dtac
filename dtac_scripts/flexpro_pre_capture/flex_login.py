@@ -10,6 +10,7 @@ import netmiko
 from time import sleep
 from collections import OrderedDict
 
+from .colorprint import print_banner
 from .save_to_html import cmd_output_to_html_file
 
 # ----------------------------------------------------------------------------------------
