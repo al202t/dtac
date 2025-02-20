@@ -16,6 +16,12 @@ from .common import pull_variables, pull_cmds_lists_dict
 #  Static 
 # -----------------------------------------------------------------------------------
 OUTPUT_FOLDER = 'C:/NFV-PreCheck'
+POLLERS = [
+	'rlpv12149.gcsc.att.com',
+	'rlpv12150.gcsc.att.com',
+	'rlpv12151.gcsc.att.com',
+	'rlpv12152.gcsc.att.com',
+]
 
 # -----------------------------------------------------------------------------------
 #  Define all your frames here 
@@ -28,7 +34,7 @@ def dtac_pre_capture():
 	], pad=0)
 	pollers_col = sg.Column([
 		[sg.Text("Pollers(s) List", text_color="black"),], 
-		[sg.Multiline("", key='pc_pollers_list', autoscroll=True, size=(30,6), disabled=False),],
+		[sg.Multiline("\n".join(POLLERS), key='pc_pollers_list', autoscroll=True, size=(30,6), disabled=False),],
 	], pad=0)
 	return sg.Frame(title=None, 
 					relief=sg.RELIEF_SUNKEN, 
@@ -113,7 +119,7 @@ FPC_BUTTUN_PALLETE_DIC["btn_grp_precap"] = {'key': 'btn1',  'frames': FPC_FRAMES
 #    second will be [i] item list of object
 # ================================================================================
 
-@activity_finish_popup
+# @activity_finish_popup
 def pc_start_executor(obj, i):
 	try:
 		# -----------------------------------------------------
@@ -147,6 +153,7 @@ def pc_start_executor(obj, i):
 		## Pull all variables from creds.txt ##
 		DYN_VARS = pull_variables(CRED_FILE)
 		COMMANDS = pull_cmds_lists_dict(COMMANDS_FILE)
+		if not COMMANDS or not DYN_VARS: return None
 
 		## Output Path :  Sample path will be  ==> "C:/NFV-PreCheck/date/time LT" 
 		CAPTURED_DATE_TIME = str(dt.datetime.today()).split(".")[0].replace(":", ".") 
