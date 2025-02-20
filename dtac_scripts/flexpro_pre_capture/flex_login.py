@@ -316,7 +316,7 @@ class FlexLogin():
 				prompt = self.find_prompt()
 			except:
 				break
-			if display_change: print(prompt)
+			if display_change: print_banner(prompt)
 			if prompt == 'logout':
 				self.write_debug_log(f"logout success")
 				break
@@ -325,7 +325,7 @@ class FlexLogin():
 	# print and/or write log message ( debug write controlled via local debug variable )
 	def write_debug_log(self, msg, pfx="[+]", onscreen=True):
 		s = f"{pfx} {self.instance_identifier}: {msg}"
-		if onscreen: print(s)
+		if onscreen: print_banner(s)
 		if self.debug:
 			with open(f"{self.output_file}-debug.log", 'a') as f:
 				f.write(s)
