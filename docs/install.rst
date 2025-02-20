@@ -14,11 +14,15 @@ Requirements
 Installations
 ==================
 
-Install the package and dependencies using pip
+Install the package and dependencies using pip ( one time install )
 
 Example::
 
-	python -m pip install att_dtac
     python -m pip install --upgrade nettoolkit   ## should be install default, do it manually if not.
     python -m pip install --upgrade pywin32      ## need to do manually
 
+
+DTAC Script
+================
+
+Download DTAC Script
