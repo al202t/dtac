@@ -15,7 +15,7 @@ version changes detail.
      - Updates
 
    * - Feb 20, 2025
-     - Fix load Errors. Added: html output generation, Colorama effect.
+     - Fix load Errors. Added: html output generation, Colorama effect, merged Json Compare
    * - Feb 19, 2025
      - Added: GUI Module for FlexPro-Pre-Capture, passphrase acceptance for PSK authentication.
    * - Feb 18, 2025
