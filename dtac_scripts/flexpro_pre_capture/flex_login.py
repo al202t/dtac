@@ -239,9 +239,23 @@ class FlexLogin():
 			self.write_debug_log(f"connected to device with custom string {login_string}")
 			return {'connected': True, 'prompt': new_prompt}
 		else:
-			self.write_debug_log(f"connection failed to device with custom string {login_string}", pfx="[-]")
-			self.write_debug_log(f"appeared prompt was {new_prompt}", pfx="[-]")
-			return {'connected': False, 'prompt': False}
+			ifconfig_op = self._verify_ifconfig_op_for_velo_vm_connection()
+			if ifconfig_op:
+				new_prompt = self.find_prompt()
+				return {'connected': True, 'prompt': new_prompt}
+			else:
+				self.write_debug_log(f"connection failed to device with custom string {login_string}", pfx="[-]")
+				return {'connected': False, 'prompt': False}
+
+	def _verify_ifconfig_op_for_velo_vm_connection(self):
+		self.write_debug_log(f"connection unidentified, checking ifconfig", pfx="[-]")
+		output_of_ifconfig = self.get_output("ifconfig").splitlines()
+		for line in output_of_ifconfig:
+			if line.startswith("eth"):
+				self.write_debug_log(f"connection was ok, proceeding", pfx="[+]")
+				new_prompt = self.find_prompt()
+				return True
+		return False
 
 	## ~~~~~~~~~~~~~~~~~~~~~~~~ Commands ~~~~~~~~~~~~~~~~~~~~~~~~ ##
 
