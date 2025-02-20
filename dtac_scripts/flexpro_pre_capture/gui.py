@@ -70,7 +70,6 @@ def dtac_pre_capture():
 		],
 		under_line(80),
 		[sg.Button("Start", change_submits=True, key='pc_start')],
-		under_line(80),
 	])
 
 ## ... Define more as needed
