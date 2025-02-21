@@ -7,6 +7,7 @@ from typing import Any
 from pathlib import Path
 from nettoolkit.nettoolkit_common import DIC
 
+from .colorprint import print_banner
 
 @dataclass
 class Mapper():
@@ -20,10 +21,10 @@ class Mapper():
 
 	def map_device(self, json_device, capture_device):
 		if json_device not in self.json_devices:
-			print(f"[-] Invalid input: {json_device} not found in Json Devices - {self.json_devices}")
+			print_banner(f"[-] Invalid input: {json_device} not found in Json Devices - {self.json_devices}")
 			return
 		if capture_device not in self.capture_devices:
-			print(f"[-] Invalid input: {capture_device} not found in Json Devices - {self.capture_devices}")
+			print_banner(f"[-] Invalid input: {capture_device} not found in Json Devices - {self.capture_devices}")
 			return
 		self.hostnames_map[json_device] = capture_device
 
@@ -67,7 +68,7 @@ class Verify():
 			for para, value in self.dp.Devices[self.hostnames_map[device]].system_para.items():
 				if para != si: continue
 				if para not in device_dict['system_para_dict'].keys():
-					print(f"[-] Information not found in JSON {para}")
+					print_banner(f"[-] Information not found in JSON {para}")
 					continue
 				DIC.merge_dict(result, self._verify_model(para, value, device, device_dict))
 				DIC.merge_dict(result, self._verify_serial(para, value, device, device_dict))
@@ -179,32 +180,44 @@ class Verify():
 	# ---------------------------- [ OUTPUT Functions ] ---------------------------- # 
 
 	# Returns output string
-	@property
-	def result_string(self):
+	def result_string(self, display=False):
 		s = ''
 		single_line = f'# {"-"*120} #\n'
 		double_line = f'# {"="*120} #\n\n'
-		s += f"{single_line}#\t DIFFERENCE BETWEEN \n#\t JSON [{self.jd.json_file}] & \n#\t PRE-CAPTURE FILES \n{single_line}\n"
+		main_header = f"{single_line}#\t DIFFERENCE BETWEEN \n#\t JSON [{self.jd.json_file}] & \n#\t PRE-CAPTURE FILES \n{single_line}\n"
+		s += main_header
+		print_banner(main_header, 'white')
 		for hostname, results in self.all_results.items():
-			s += f"{single_line}#\t\t\t{hostname}\n{single_line}"
+			hostname_header = f"{single_line}#\t\t\t{hostname}\n{single_line}"
+			s += hostname_header
+			print_banner(hostname_header, 'cyan')
 
 			for key, result_items in results.items():
-				s += f"{single_line}# {key}\n{single_line}"
+				if key == '[+] matches': color = 'green'
+				if key == '[-] issues': color = 'red'
+				key_header = f"{single_line}# {key}\n{single_line}"
+				s += key_header
+				print_banner(key_header, color)
+
 				if len(result_items) > 0 :
 					max_len = max([len(x) for x in result_items.keys()])
 				for k, v in result_items.items():
-					s += f"  {k.ljust(max_len)}: {v}\n"
+					result_line = f"  {k.ljust(max_len)}: {v}\n"
+					s += result_line
+					print_banner(result_line.rstrip(), color)
 				s+="\n"
+				print_banner("\n", None)
 			s += double_line
+			print_banner(double_line, None)
 
 		return s
 
 	# writes output string to a file
-	def results_to_file(self, folder=None):
+	def results_to_file(self, folder=None, result_string=''):
 		filename = self.op_file_name if self.op_file_name else "pre-json_comparision_result"
 		file = f"{folder}/{filename}.txt"
 		with open(file, 'w') as f:
-			f.write(self.result_string)
+			f.write(result_string)
 
 
 # ----------------------------------------------------------------------------------------

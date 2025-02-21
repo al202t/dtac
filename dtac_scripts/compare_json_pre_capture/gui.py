@@ -13,6 +13,7 @@ from itertools import zip_longest
 from .device_parameteres_read import DevPara, DevicesPara
 from .json_parameters_read    import JsonData
 from .compare                 import Verify, Mapper
+from .colorprint              import print_banner
 
 # -----------------------------------------------------------------------------------
 #  Static 
@@ -117,14 +118,14 @@ def exec_cj_pull_devices(obj, i):
 		#  VERIFICATION
 		json_file = i['cj_json_file']
 		if not json_file:
-			print("[-] Mandatory Input missing Json file")
-			print("")
+			print_banner("[-] Mandatory Input missing Json file")
+			print_banner("")
 			return None
 
 		capture_files = i['cj_devices_files']
 		if not capture_files:
-			print("[-] Mandatory Input missing Pre-Capture file(s)")
-			print("")
+			print_banner("[-] Mandatory Input missing Pre-Capture file(s)")
+			print_banner("")
 			return None
 
 		#  START EXECUTIONS
@@ -139,12 +140,12 @@ def exec_cj_pull_devices(obj, i):
 			obj.event_update_element(cj_json_devices_list={'value': "\n".join(json_devices)})	
 			obj.event_update_element(cj_devices_list={'value': "\n".join(capture_devices)})	
 		except Exception as e:
-			print(f"[-] Error creating device maps")
+			print_banner(f"[-] Error creating device maps")
 			return
-		print(f"[+] All Activity Finished")
 
 	except KeyboardInterrupt:
-		print(f"[-] Activity Cancelled")
+		print_banner(f"[-] Activity Cancelled")
+		print_banner("")
 
 
 # ================================== #
@@ -163,13 +164,13 @@ def exec_cj_json_file_open(i):
 	try:
 		open_text_file(i['cj_json_file_open'])
 	except Exception as e:
-		print(f"[-] Unable to open file.")
+		print_banner(f"[-] Unable to open file.")
 		return False
 def exec_cj_devices_files_open(i):
 	try:
 		open_text_file(i['cj_devices_files_open'])
 	except Exception as e:
-		print(f"[-] Unable to open file.")
+		print_banner(f"[-] Unable to open file.")
 		return False
 
 def exec_cj_output_path_open(i):
@@ -177,7 +178,7 @@ def exec_cj_output_path_open(i):
 		if i['cj_output_path']:
 			open_folder(i['cj_output_path'])
 	except Exception as e:
-		print(f"[-] Unable to open folder.")
+		print_banner(f"[-] Unable to open folder.")
 		return False
 
 def exec_cj_start(i):
@@ -185,14 +186,14 @@ def exec_cj_start(i):
 		#  VERIFICATION
 		json_file = i['cj_json_file']
 		if not json_file:
-			print("[-] Mandatory Input missing Json file")
-			print("")
+			print_banner("[-] Mandatory Input missing Json file")
+			print_banner("")
 			return None
 
 		capture_files = i['cj_devices_files']
 		if not capture_files:
-			print("[-] Mandatory Input missing Pre-Capture file(s)")
-			print("")
+			print_banner("[-] Mandatory Input missing Pre-Capture file(s)")
+			print_banner("")
 			return None
 
 		#  START EXECUTIONS
@@ -210,19 +211,18 @@ def exec_cj_start(i):
 			V = Verify(jd=JD, dp=DP)
 			V.hostnames_map = hostnames_map
 			V()
-			if i['cj_display']:
-				print(V.result_string)                          ## Display result on console
+			result_string = V.result_string(display=i['cj_display'])                          ## Display result on console
 			if i['cj_write']:
-				V.results_to_file(folder=folder)                ## send results to file
+				V.results_to_file(folder=folder, result_string=result_string)                ## send results to file
 
 
 		except Exception as e:
-			print(f"[-] Error creating device maps\n{e}")
+			print_banner(f"[-] Error creating device maps\n{e}")
 			return
-		print(f"[+] All Activity Finished")
+		print_banner(f"[+] All Activity Finished")
 
 	except KeyboardInterrupt:
-		print(f"[-] Activity Cancelled")
+		print_banner(f"[-] Activity Cancelled")
 
 # ================================== #
 #   // EVENT_FUNCTIONS MAPPING  //   #
