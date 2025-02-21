@@ -59,15 +59,15 @@ def dtac_pre_capture():
 		[pollers_col, sg.VerticalSeparator(), devices_col],
 		#
 		[sg.Text("Public Key Pass-phrase", text_color="black"), sg.InputText("", password_char='*', key='pc_passphrase', size=(15,1)),],
-		[sg.Text('Concurrent connections throttle', text_color="black"), 
-		 sg.InputText(50,  key='pc_max_connections', size=(5,1) ), sg.Text('Use 1 for sequential', text_color="white"), 
+		[sg.Text('Concurrent connections', text_color="black"), 
+		 sg.InputText(12,  key='pc_max_connections', size=(5,1) ), sg.Text('Use 1 for sequential', text_color="white"), 
 		],
-		[sg.Checkbox('JCP', key='pc_jcp', default=True, text_color='black'),
-		 sg.Checkbox('NMTE', key='pc_nmte', default=True, text_color='black'),
-		 sg.Checkbox('VeloVM', key='pc_velovm', default=True, text_color='black'),
-		 sg.Checkbox('FlexConnect Summary', key='pc_fc_summary', default=True, text_color='black'),
-		 sg.Checkbox('Debug', key='pc_debug', default=False, text_color='black'),
-		],
+		# [sg.Checkbox('JCP', key='pc_jcp', default=True, text_color='black'),
+		#  sg.Checkbox('NMTE', key='pc_nmte', default=True, text_color='black'),
+		#  sg.Checkbox('VeloVM', key='pc_velovm', default=True, text_color='black'),
+		#  sg.Checkbox('FlexConnect Summary', key='pc_fc_summary', default=True, text_color='black'),
+		#  sg.Checkbox('Debug', key='pc_debug', default=False, text_color='black'),
+		# ],
 		under_line(80),
 		[sg.Button("Start", change_submits=True, key='pc_start')],
 	])
@@ -194,12 +194,12 @@ def pc_start_executor(obj, i):
 			FCC.output_csv_report_file_col_seq = CSV_REPORT_COLS_SEQ
 			FCC.output_intf_summary_report_file = INTERFACE_SUMMARY_REPORT_FILE_NAME
 			FCC.output_cmds_exec_summary_report_file = CMDS_EXEC_SUMMARY_REPORT_FILE_NAME
-			FCC.max_connections = int(i['pc_max_connections'])
-			FCC.display_final_summary = i['pc_fc_summary']
-			FCC.pc_jcp = i['pc_jcp']
-			FCC.pc_nmte = i['pc_nmte']
-			FCC.pc_velovm = i['pc_velovm']
-			FCC.debug = i['pc_debug']
+			FCC.max_connections = min(int(i['pc_max_connections']) , 50)
+			# FCC.display_final_summary = i['pc_fc_summary']
+			# FCC.pc_jcp = i['pc_jcp']
+			# FCC.pc_nmte = i['pc_nmte']
+			# FCC.pc_velovm = i['pc_velovm']
+			# FCC.debug = i['pc_debug']
 			# ----------- 3. Capture
 			FCC()
 		except Exception as e:
