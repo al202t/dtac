@@ -29,8 +29,8 @@ JUNOS_MD5_DICT ={
 	'jinstall-host-nfx-3-x86-64-22.4R2.8-secure-signed.tgz': '7f9fe241eaa13252b5342c6c6ce99a3f',
 }
 JUNOS_SHORTNAME_DICT = {
-	"jinstall-host-nfx-3-x86-64-22.4R2-S2.6-secure-signed.tgz": "(Junos 22.4R2-S2.6)",
-	'jinstall-host-nfx-3-x86-64-22.4R2.8-secure-signed.tgz': "(Junos 22.4R2-S2.8)",
+	"jinstall-host-nfx-3-x86-64-22.4R2-S2.6-secure-signed.tgz": "(22.4R2-S2.6)",
+	'jinstall-host-nfx-3-x86-64-22.4R2.8-secure-signed.tgz': "(22.4R2-S2.8)",
 }
 
 # ----------------------------------------------------------------------------------------

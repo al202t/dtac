@@ -112,6 +112,12 @@ class DeviceCapture():
 		except OSError:
 			self.write_debug_log(f"Premature Exited", pfx="[-]", onscreen=True)
 
+		#
+		if (self.captures_report_dict['JDM'] == self.captures_report_dict['JCP'] == self.captures_report_dict['NMTE'] == self.captures_report_dict['VNF-VRT'] == 'OK'):
+			self.captures_report_dict['Status'] = 'Success'
+
+
+
 
 	def initialize_jump_server_connection(self):
 		try:
