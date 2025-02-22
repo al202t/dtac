@@ -16,6 +16,8 @@ from .colorprint import print_banner
 # -----------------------------------------------------------------------------------
 #  Static 
 # -----------------------------------------------------------------------------------
+CREDS_FILE = 'C:/PreQA6/creds.txt'
+CMDS_FILE  = 'C:/PreQA6/flexware_pre_capture_commands.txt'
 OUTPUT_FOLDER = 'C:/NFV-PreCheck'
 POLLERS = [
 	'rlpv12149.gcsc.att.com',
@@ -43,23 +45,25 @@ def dtac_pre_capture():
 
 		[sg.Text('Pre-Capture',  font=('TimesNewRoman', 12), text_color="orange"),], 
 		[sg.Text('Creds file:\t', text_color="black"), 
-	     sg.InputText(get_cache(CACHE_FILE, 'pc_creds_file'), size=(30,1),  key='pc_creds_file', change_submits=True,), 
-	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='pc_creds_file_open', button_color="darkgrey"),
+	     sg.InputText(CREDS_FILE, size=(40,1),  key='pc_creds_file', readonly=True, disabled_readonly_background_color='brown'), 
+	     # sg.FileBrowse(button_color="grey"), 
+	     sg.Button("open file", change_submits=True, key='pc_creds_file_open', button_color="darkgrey"),
 	    ],
 		[sg.Text('Commands file:\t', text_color="black"), 
-	     sg.InputText(get_cache(CACHE_FILE, 'pc_cmds_file'), size=(30,1),  key='pc_cmds_file', change_submits=True,), 
-	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='pc_cmds_file_open', button_color="darkgrey"),
+	     sg.InputText(CMDS_FILE, size=(40,1),  key='pc_cmds_file', readonly=True, disabled_readonly_background_color='brown'), 
+	     # sg.FileBrowse(button_color="grey"), 
+	     sg.Button("open file", change_submits=True, key='pc_cmds_file_open', button_color="darkgrey"),
 	    ],
-		[sg.Text('output folder:\t', text_color="black"), 
-		 sg.InputText(OUTPUT_FOLDER, key='pc_output_path', size=(30,1)),  
-		 sg.FolderBrowse(button_color="orange"), 
+		[sg.Text('Output folder:\t', text_color="black"), 
+		 sg.InputText(OUTPUT_FOLDER, key='pc_output_path', size=(40,1), readonly=True, disabled_readonly_background_color='brown'),  
+		 # sg.FolderBrowse(button_color="orange"), 
 		 sg.Button("open", change_submits=True, key='pc_output_path_open', button_color="darkgrey"),
 		],
 		#
 		[pollers_col, sg.VerticalSeparator(), devices_col],
 		#
-		[sg.Text("Public Key Pass-phrase", text_color="black"), sg.InputText("", password_char='*', key='pc_passphrase', size=(15,1)),],
-		[sg.Text('Concurrent connections', text_color="black"), 
+		[sg.Text("Pass-phrase:\t\t", text_color="black"), sg.InputText("", password_char='*', key='pc_passphrase', size=(15,1)),],
+		[sg.Text('Concurrent connections:\t', text_color="black"), 
 		 sg.InputText(12,  key='pc_max_connections', size=(5,1) ), sg.Text('Use 1 for sequential', text_color="white"), 
 		],
 		# [sg.Checkbox('JCP', key='pc_jcp', default=True, text_color='black'),
@@ -264,8 +268,8 @@ def exec_pc_output_path_open(i):
 
 FPC_EVENT_FUNCTIONS = {
 	'pc_start' : pc_start_executor,
-	'pc_creds_file': update_cache_pc,
-	'pc_cmds_file': update_cache_pc,
+	# 'pc_creds_file': update_cache_pc,
+	# 'pc_cmds_file': update_cache_pc,
 	'pc_creds_file_open': exec_pc_creds_file_open,
 	'pc_cmds_file_open': exec_pc_cmds_file_open,
 	'pc_output_path_open': exec_pc_output_path_open,

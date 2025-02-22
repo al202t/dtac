@@ -48,7 +48,7 @@ def dtac_compare_json_data():
 	     sg.InputText('', size=(30,1),  key='cj_devices_files', change_submits=True, ), 
 	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='cj_devices_files_open', button_color="darkgrey"),
 	    ],
-		[sg.Text('output folder:\t', text_color="black"), 
+		[sg.Text('Output folder:\t', text_color="black"), 
 		 sg.InputText(OUTPUT_FOLDER, key='cj_output_path', size=(30,1)),  
 		 sg.FolderBrowse(button_color="orange"), 
 		 sg.Button("open", change_submits=True, key='cj_output_path_open', button_color="darkgrey"),
@@ -140,7 +140,7 @@ def exec_cj_pull_devices(obj, i):
 			obj.event_update_element(cj_json_devices_list={'value': "\n".join(json_devices)})	
 			obj.event_update_element(cj_devices_list={'value': "\n".join(capture_devices)})	
 		except Exception as e:
-			print_banner(f"[-] Error creating device maps")
+			print_banner(f"[-] Error creating device maps, Check Input Files")
 			return
 
 	except KeyboardInterrupt:
