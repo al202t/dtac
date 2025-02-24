@@ -186,29 +186,29 @@ class Verify():
 		double_line = f'# {"="*120} #\n\n'
 		main_header = f"{single_line}#\t DIFFERENCE BETWEEN \n#\t JSON [{self.jd.json_file}] & \n#\t PRE-CAPTURE FILES \n{single_line}\n"
 		s += main_header
-		print_banner(main_header, 'white')
+		if display: print_banner(main_header, 'white')
 		for hostname, results in self.all_results.items():
 			hostname_header = f"{single_line}#\t\t\t{hostname}\n{single_line}"
 			s += hostname_header
-			print_banner(hostname_header, 'cyan')
+			if display: print_banner(hostname_header, 'cyan')
 
 			for key, result_items in results.items():
 				if key == '[+] matches': color = 'green'
 				if key == '[-] issues': color = 'red'
 				key_header = f"{single_line}# {key}\n{single_line}"
 				s += key_header
-				print_banner(key_header, color)
+				if display: print_banner(key_header, color)
 
 				if len(result_items) > 0 :
 					max_len = max([len(x) for x in result_items.keys()])
 				for k, v in result_items.items():
 					result_line = f"  {k.ljust(max_len)}: {v}\n"
 					s += result_line
-					print_banner(result_line.rstrip(), color)
+					if display: print_banner(result_line.rstrip(), color)
 				s+="\n"
-				print_banner("\n", None)
+				if display: print_banner("\n", None)
 			s += double_line
-			print_banner(double_line, None)
+			if display: print_banner(double_line, None)
 
 		return s
 

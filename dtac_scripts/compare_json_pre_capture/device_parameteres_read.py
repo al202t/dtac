@@ -123,7 +123,7 @@ class DevPara():
 		for line in self.commands_list_dict['show chassis hardware']:
 			if not line.startswith("Chassis "): continue
 			spl = line.strip().split()
-			serial = spl[-1]
+			serial = spl[-2]
 			return serial
 
 	def is_junos_available(self):
@@ -163,7 +163,7 @@ class DevPara():
 				spl = line.strip().split()
 				if ' speed ' in line:
 					intf_dict['speed'] = spl[-1]
-				elif ' duplex ' in line:
+				elif ' link-mode ' in line or ' duplex ' in line:
 					intf_dict['duplex'] = spl[-1]
 				elif ' interface-mode ' in line:
 					intf_dict['mode'] = spl[-1]
