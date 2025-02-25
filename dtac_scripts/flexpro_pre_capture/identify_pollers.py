@@ -82,6 +82,8 @@ class ActionPollers():
 	def iterrate_over_devices(self):
 		self.devices_updated = OrderedDict()
 		for device in self.devices:
+			device = device.strip()
+			if not device: continue
 			self.devices_updated[device] = {}
 			self.devices_updated[device]['jdm_device'] = self.change_JZZ_to_JDM(device)
 			self.devices_updated[device]['device_ip'] = self.collect_ip(self.devices_updated[device]['jdm_device'])

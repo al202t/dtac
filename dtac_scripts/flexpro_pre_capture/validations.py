@@ -180,7 +180,7 @@ class Interface_Output_Capture_Validations():
 		return []
 
 	def _intf_negotiation(self, line, auto_neg):
-		if "no auto-negotiation" in line: return "No"
+		if "no-auto-negotiation" in line or "no auto-negotiation" in line: return "No"
 		elif "auto-negotiation" in line: return "Yes"
 		return auto_neg
 
@@ -189,7 +189,7 @@ class Interface_Output_Capture_Validations():
 		return speed
 
 	def _intf_duplex(self, line, duplex):
-		if "duplex" in line: return line.split()[-1]
+		if " link-mode " in line or "duplex" in line : return line.split()[-1]
 		return duplex
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

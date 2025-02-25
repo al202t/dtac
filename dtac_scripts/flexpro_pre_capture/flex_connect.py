@@ -53,8 +53,10 @@ class DeviceCapture():
 		# 2 JDM Shell Login 
 		jdm_shell_connection = self.connect_to_jdm()
 		if jdm_shell_connection['connected']:
+			self.captures_report_dict['Status'] = 'JDM shell connected'
 
 			html_file_header(self.device, file=self.output_file_html)
+
 
 			# 2.1 JDM CLI Captures 
 			mode = 'shell'
@@ -67,6 +69,7 @@ class DeviceCapture():
 			# 2.2 JDM CLI Login 
 			jdm_cli_connection = self.change_to_jdm_cli()
 			if jdm_cli_connection['connected']:
+				self.captures_report_dict['Status'] = 'JDM cli connected'
 
 				# 2.2.1 JDM CLI Captures
 				mode = 'cli'
@@ -115,7 +118,8 @@ class DeviceCapture():
 		#
 		if (self.captures_report_dict['JDM'] == self.captures_report_dict['JCP'] == self.captures_report_dict['NMTE'] == self.captures_report_dict['VNF-VRT'] == 'OK'):
 			self.captures_report_dict['Status'] = 'Success'
-
+		else:
+			self.captures_report_dict['Status'] = 'Completed'
 
 
 
@@ -151,7 +155,7 @@ class DeviceCapture():
 														 username=self.dyn_vars['username'], 
 										  				 password=self.dyn_vars['jdm_pw'])
 			if not jdm_shell_connection['connected']:
-				self.captures_report_dict['Status'] = "Unable to Login"
+				self.captures_report_dict['Status'] = "Unable to Login JDM"
 				self.write_debug_log(f"Unable to connect to JDM", pfx="[-]", onscreen=True)
 			return jdm_shell_connection
 		except:
@@ -163,7 +167,7 @@ class DeviceCapture():
 		try:
 			jdm_cli_connection = self.FL.change_mode_to_cli()
 			if not jdm_cli_connection['connected']:
-				self.captures_report_dict['Status'] = "Partial Captures"
+				self.captures_report_dict['Status'] = "Unable to Enter JDM CLI"
 				self.write_debug_log(f"Unable to connect to JDM CLI", pfx="[-]", onscreen=True)
 			return jdm_cli_connection
 		except:
@@ -182,10 +186,10 @@ class DeviceCapture():
 														  username='', 
 														  password=self.dyn_vars['jcp_pw'])
 			if not jcp_shell_connection['connected']: 
-				self.captures_report_dict['Status'] = "Partial Captures"
+				self.captures_report_dict['Status'] = "Unable to enter JCP"
 				self.write_debug_log(f"Unable to connect to JCP", pfx="[-]", onscreen=True)
 		except:
-			self.captures_report_dict['JCP'] = "Login Failed"
+			self.captures_report_dict['JCP'] = "connect Failed"
 			self.write_debug_log(f"Unable to connect to JCP", pfx="[-]", onscreen=True)
 			return {'connected': False}
 
@@ -193,7 +197,7 @@ class DeviceCapture():
 		try:
 			jcp_cli_connection = self.FL.change_mode_to_cli()
 			if not jcp_cli_connection['connected']:
-				self.captures_report_dict['Status'] = "Partial Captures"
+				self.captures_report_dict['Status'] = "Unable to enter JCP CLI"
 				self.write_debug_log(f"Unable to connect to JCP CLI", pfx="[-]", onscreen=True)
 		except:
 			self.captures_report_dict['JCP'] = "CLI Failed"
@@ -231,7 +235,7 @@ class DeviceCapture():
 														  username='', 
 														  password=self.dyn_vars['nm_te_pw'])
 			if not nmte_shell_connection['connected']: 
-				self.captures_report_dict['Status'] = "Partial Captures"
+				self.captures_report_dict['Status'] = "Unable to Enter NMTE"
 				self.write_debug_log(f"Unable to connect to NMTE", pfx="[-]", onscreen=True)
 		except:
 			self.captures_report_dict['NMTE'] = "Login Failed"
@@ -242,7 +246,7 @@ class DeviceCapture():
 		try:
 			nmte_cli_connection = self.FL.change_mode_to_cli()
 			if not nmte_cli_connection['connected']:
-				self.captures_report_dict['Status'] = "Partial Captures"
+				self.captures_report_dict['Status'] = "Unable to enter JMTE CLI"
 				self.write_debug_log(f"Unable to connect to NMTE CLI", pfx="[-]", onscreen=True)
 		except:
 			self.captures_report_dict['NMTE'] = "CLI Failed"
@@ -267,7 +271,7 @@ class DeviceCapture():
 		# // VNF - Velo Login and capture //
 		GS = "\x1D"                                 	## ==> CTRL+"]"
 		try:
-			velo_console = self.FL.connect_device_other(login_string=f"virsh console {vnf_id}\n\n", 
+			velo_console = self.FL.connect_device_other(login_string=f"virsh console {vnf_id} --force\n\n", 
 													device='VRT',
 													username=self.dyn_vars['vrt_un'], 
 													password=self.dyn_vars['vrt_pw'])
@@ -288,7 +292,7 @@ class DeviceCapture():
 			self.FL.exit(spl_char=GS)
 			return True
 		else:
-			self.captures_report_dict['Status'] = "Partial Captures"
+			self.captures_report_dict['Status'] = "Unable to enter Velo-VNF"
 			self.write_debug_log(f"Unable to connect to Velo-VNF", pfx="[-]", onscreen=True)
 			self.captures_report_dict['VNF-VRT'] = "Console Failed"
 			return False
@@ -359,19 +363,25 @@ class FlxConnectCapture(Multi_Execution):
 		self.output_cmds_exec_summary_report_file=None
 		self.AP = AP		
 		super().__init__(self.AP.dict_info)              ## Initialize with list of [{device, device_ip , server}, ]
-		self.devices_reports = {}
+		# self.devices_reports = {}
+		self.init_devices_reports()
 		self.devices_interface_reports = {}
 		self.devices_command_exec_summary = {}
 		self.passphrase = AP.passphrase
-		self.display_final_summary = False
+		self.display_final_summary = True
 		self.pc_jcp = True
 		self.pc_nmte = True
 		self.pc_velovm = True
-		self.debug = True
+		self.debug = False
 
 	def __call__(self):
 		create_folders([self.output_path,], silent=False)
 		self.start()
+
+	def init_devices_reports(self):
+		self.devices_reports = {}
+		for dev, dev_dict in self.AP.devices_report.items():
+			self.devices_reports[dev] = dev_dict
 
 	# Kick
 	def execute(self, action_device_info):
@@ -409,9 +419,9 @@ class FlxConnectCapture(Multi_Execution):
 			system_validation_dict.update(int_validation_dict)
 			system_validation_dict.update(int_to_sys_para)
 
-			self.devices_reports[device] = {}
+			# self.devices_reports[device] = {}
 			self.devices_reports[device].update(system_validation_dict)
-			self.devices_reports[device].update(self.AP.devices_report[device])
+			# self.devices_reports[device].update(self.AP.devices_report[device])
 			self.devices_reports[device].update(captures_report_dict)
 		else:
 			self.devices_reports[device] = {'Hostname':device, 'Status': "Not Accessible"}

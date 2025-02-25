@@ -12,5 +12,5 @@ __all__ = [
 ]
 
 ## --- INFO --- ##
-__version__ = 0.2
+__version__ = 1.0
 __doc__ = '''DTAC Engineering Team Tool Set'''
