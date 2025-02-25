@@ -6,6 +6,7 @@
    :numbered:
 
    Install Instructions <docs/install>
+   Device Capture Instructions <docs/instructions_captures>
    Version Control <docs/version_control>
 
 
