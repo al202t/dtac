@@ -46,7 +46,7 @@ def dtac_compare_json_data():
 	    ],
 		[sg.Text('Pre-Capture file(s):\t', text_color="black"), 
 	     sg.InputText('', size=(30,1),  key='cj_devices_files', change_submits=True, ), 
-	     sg.FileBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='cj_devices_files_open', button_color="darkgrey"),
+	     sg.FilesBrowse(button_color="grey"), sg.Button("open file", change_submits=True, key='cj_devices_files_open', button_color="darkgrey"),
 	    ],
 		[sg.Text('Output folder:\t', text_color="black"), 
 		 sg.InputText(OUTPUT_FOLDER, key='cj_output_path', size=(30,1)),  
