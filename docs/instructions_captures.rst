@@ -2,7 +2,7 @@ Capture Instructions
 =================================================
 
 Requirements
-==================
+----------------
 
 	1. creds.txt file path ( Fixed as C:\PreQA6\creds.txt )  --> File can be opened and edited by clicking open file button
 	2. commands list tex file ( Fixed as C:\PreQA6\flexware_pre_capture_commands.txt ) --> File can be opened and edited by clicking open file button
@@ -14,7 +14,11 @@ Requirements
 -----------------
 
 * **Creds.txt** and **flexware_pre_capture_commands.txt** sample files are uploaded along with script.
-* Outputs will be stored in C:\NFV-PreCheck Folder.  Everytime while execute, it will create a <DATE> folder \ <TIME LT> folder. All output files will reside within it. 
+
+Steps
+---------------
+
 * Click on Start to start executing scipt once all necessary inputs are entered.
 * Execution progress can be seen on console/command prompt. 
+* Outputs will be stored in C:\NFV-PreCheck Folder.  Everytime while execute, it will create a <DATE> folder \ <TIME LT> folder. All output files will reside within it. 
 
