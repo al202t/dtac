@@ -29,3 +29,4 @@ Result will appear on command/console window  and/or to output file based on add
 
 Output will be stored under C:\NFV-PreCheck\<DATE>  Folder.
 
+* Press - Esc or "X" top right button to close. 

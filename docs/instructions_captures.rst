@@ -22,3 +22,6 @@ Steps
 * Execution progress can be seen on console/command prompt. 
 * Outputs will be stored in C:\NFV-PreCheck Folder.  Everytime while execute, it will create a <DATE> folder \ <TIME LT> folder. All output files will reside within it. 
 
+
+* Press - CTRL+C  to terminate the job.
+* Press - Esc or "X" top right button to close. 
