@@ -1,4 +1,4 @@
-JSON Capture Instructions
+JSON Compare Instructions
 =================================================
 
 Requirements
@@ -10,23 +10,42 @@ Requirements
 Steps
 -------------
 
-	1. Ericsson portal select top level (order level), take **data json** output to a file. ( extension should be **.json** ) 
-	2. Capture the output of the devices using Pre-Capture tab.
-	3. Select a Json File.
-	4. Select respective devices pre-capture files.
-	5. Output Folder ( Fixed as C:\NFV-PreCheck ) --> Folder can be access quickly by clicking open button
+	``Fixed Inputs``
 
-Once provided json and precapture files,  Click on ``Pull Devices`` button. It will pull the devices details and present in two device lists.
+	1. **Output Folder** ( Fixed as **C:/NFV-PreCheck** )
+		* Folder can be access quickly by clicking open button
+		* Output will be stored under **C:/NFV-PreCheck/<DATE>**  Folder.
 
-	6. Map the devices between pre-capture list v/s json list horizontally.  Move/shuffle device up/down (cut-paste) if require.
+	``Input require each time``
 
-Once mapping done, Click on ``Compare`` button. 
+	1. *Ericsson portal*.  > Select device. > Select top level  > Save  **data json** output to a file.
+		* Extension of files should be **.json**  
+		* Select this **Json File** as first input
 
-Result will appear on command/console window  and/or to output file based on additional option selected.
+	2. *Capture the output* of the devices using Pre-Capture tab.
+		* Select captured devices *.log* files as second input.
+		* can be select a single or multiple devices.
 
-	7. Onscreen display - to see result in console window
-	8. Save to file  - to write output to a text output file. ( output file name will be starting 13 characters from a device hostname )
+	3. Click ``Pull Devices`` button. 
+		* This will pull the devices details and display in two device lists windows.
 
-Output will be stored under C:\NFV-PreCheck\<DATE>  Folder.
+	4. Map the devices between pre-capture list v/s json list ( if require )
+		* Mapping to be done horizontally.
+		* Move/shuffle device up/down using cut-paste if require.
+
+	5. Click on ``Compare`` button. 
+
+	``Optional Inputs``
+
+	1. **Onscreen display** checkbox - to see result in console window
+		* Result will appear on command/console window  and/or to output file based on additional option selected.
+	2. **Save to file**  - to write output to a text output file.	
+		* output file name will be starting 13 characters from a device hostname
+
 
 * Press - Esc or "X" top right button to close. 
+
+
+.. image:: img/compare_json.png
+  :width: 400
+  :alt: Pre-Capture Image.

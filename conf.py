@@ -13,12 +13,12 @@ sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'dtac'
-copyright = '2025, ALIASGAR [ALI]'
-author = 'ALIASGAR [ALI]'
+project = 'ATT DTAC Automation Scripts'
+copyright = 'ATT DTAC'
+# author = 'ALIASGAR [ALI]'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.02'
+release = '1.0'
 
 # -- General configuration ---------------------------------------------------
 
