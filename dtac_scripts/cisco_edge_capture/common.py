@@ -26,23 +26,6 @@ def text_file_content(file):
 		lines = f.readlines()
 	return lines
 
-# Returns All kinds of commands in dictionary format ( lines are coming from text files)
-def get_cmds_dict(lines):
-	d = {}
-	for line in lines:
-		line = line.strip()
-		if not line: continue
-		if  not line.startswith("::") and line.endswith("::"):  # // 1st LEVEL ( JDM/JCP/NMTE... )
-			k = line.split("::")[0]
-			if not d.get(k): d[k] = {}
-			d2 = d[k]
-		elif line.startswith("::") and line.endswith("::"):     # // 2nd LEVEL ( CLI/SHELL )
-			k = line.split("::")[1]
-			d2[k] = []
-			d3 = d2[k]
-		else:                                                   # // 3rd LEVEL ( COMMANDS )
-			d3.append(line) 
-	return d
 
 # Retrives the contents of creds.txt file, and and executes each lines to convert it to `variable = value`
 # creds file content which starts at first columns will be considered, 
@@ -72,50 +55,15 @@ def pull_variables(cred_file):
 # reads mentioned commands file  an convert its content to dictionary format
 def pull_cmds_lists_dict(pre_capture_command_file):
 	try:
-		tfc = text_file_content(pre_capture_command_file)
+		return text_file_content(pre_capture_command_file)
 	except Exception as e:
 		print_banner(f"[-] Commands File read error\n{e}")
-		return {}
-	try:
-		DEVICE_TYPE_TO_CMDS_DICT_MAP =  get_cmds_dict(tfc)
-	except Exception as e:
-		print_banner(f"[-] Commands File data error\nPossible Reason incorrect format.\n{e}")
-		return {}
-	return DEVICE_TYPE_TO_CMDS_DICT_MAP
+		return []
 
 # ------------------------ [ OPERATIONS ] ------------------------ #
 
-# returns list of vnf list (except vjunos0) containing its (type, index) tuple
-# requires output of commands "show virsh list" to retrive the same.
-def get_vm_device_n_type(op):
-	lines = op.splitlines()
-	start = False
-	vnf_list = []
-	for line in lines:
-		if not line.strip(): continue
-		if line.strip().startswith("-------"): 
-			start = True
-			continue
-		if not start: continue
-		if line.find('vjunos0') > -1: continue
-		spl = line.strip().split()
-		if len(spl) > 2:
-			#  TUPLE OF      ( VNF_TYPE    , VNF_ID  )
-			vnf_list.append( (spl[1][16:19], spl[0]) )      ## (3 Characters from 16th Position, ID)
-	if not vnf_list:
-		return [(None, None)]
-	return vnf_list
 
-# returns dictionary of vnf type and respective vnf ids
-# requires command and output of commands "show virsh list" to retrive the same.
-def get_vnf_type_id(cmd, output):
-	if cmd != "virsh list": return {}
-	VNF_TYPE_ID = {}
-	vnf_type_id_list = get_vm_device_n_type(output)
-	for (vnf_type, vnf_id) in vnf_type_id_list:
-		if vnf_type == None or vnf_id == None: continue
-		VNF_TYPE_ID[vnf_type] = vnf_id 
-	return VNF_TYPE_ID
+
 
 # convert string repr of vlan numbers to integer Ex: Vlan3001 to 3001
 def get_digits(s):
@@ -163,14 +111,14 @@ def get_a_cmd_output_from_capture(cmd, lines):
 # output should be in 3 leveled nested dictionary format( device: console: command: output) 
 def write_output_to_file(captured_outputs, file):
 	s = ""
-	singe_line = f"# {'-'*80}\n"
-	dbl_line = f"# {'='*80}\n"
+	singe_line = f"!{'-'*80}\n"
+	dbl_line = f"! {'='*80}\n"
 	for device, device_dict in captured_outputs.items():
 		for consoletype, cmds_dict in  device_dict.items():
-			s += f"\n\n{singe_line}# \t\t\t{device} - OUTPUT\n{singe_line}"
-			s += f"# \t\t\t{consoletype} Mode OUTPUT\n{singe_line}"
+			s += f"\n\n{singe_line}! \t\t\t{device} - OUTPUT\n{singe_line}"
+			s += f"! \t\t\t{consoletype} Mode OUTPUT\n{singe_line}"
 			for cmd, output in cmds_dict.items():
-				s += f"\n{dbl_line}# Output For command: {cmd}\n{dbl_line}\n{output}"
+				s += f"\n{dbl_line}! Output For command: {cmd}\n{dbl_line}\n{output}"
 	with open(file, 'w') as f:
 		f.write(s)	
 
@@ -222,8 +170,6 @@ def write_interface_summary(device_int_dict, output_intf_summary_report_file, ro
 		try:
 			df = pd.DataFrame(v).fillna('')[rows]
 			df = df.T[cols]
-			df['LLDP Neighbor'] = df['HA Neighbor']
-			df.drop(['HA Neighbor',], axis=1, inplace=True)
 			d[k] = df
 		except:
 			d[k] = pd.DataFrame({'Result': ['Error',]})

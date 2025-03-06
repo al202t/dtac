@@ -336,7 +336,7 @@ class DeviceCapture():
 		if onscreen: print_banner(s)
 		if self.debug:
 			with open(f"{self.output_file}-debug.log", 'a') as f:
-				f.write(s)
+				f.write(s+"\n")
 
 # ========================================== ========================================== #
 

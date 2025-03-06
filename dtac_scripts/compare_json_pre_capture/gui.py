@@ -102,7 +102,7 @@ CJ_FRAMES_GRP = {
 #   Creating 'Buttons' and ascociate each with a group name
 # ---------------------------------------------------------------------------------------
 CJ_BUTTUN_PALLETE_DIC = OrderedDict()
-CJ_BUTTUN_PALLETE_DIC["btn_grp_comparejason"] = {'key': 'btn2',  'frames': CJ_FRAMES_GRP,  "button_name": "Compare Json"}
+CJ_BUTTUN_PALLETE_DIC["btn_grp_precap"] = {'key': 'btn1',  'frames': CJ_FRAMES_GRP,  "button_name": "Compare Json"}
 # ... Add more buttons as necessary
 
 

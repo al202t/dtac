@@ -25,8 +25,8 @@ CTRL_C = '\003'
 
 # writes provided command and its output to given file (append mode)
 def cmd_output_to_file(cmd, output, file):
-	dbl_line = f"# {'='*80}\n"
-	s = f"\n{dbl_line}# Output For command: {cmd}\n{dbl_line}\n{output}\n"
+	dbl_line = f"! {'='*80}\n"
+	s = f"\n{dbl_line}! Output For command: {cmd}\n{dbl_line}\n{output}\n"
 	with open(file, 'a') as f:
 		f.write(s)
 
@@ -34,7 +34,7 @@ def cmd_output_to_file(cmd, output, file):
 #   FLEX LOGIN BASE CLASS
 # ------------------------------------------------------------------------------------------------------
 @dataclass
-class FlexLogin():
+class EdgeLogin():
 	server: str                                 # poller
 	server_auth_user: str                       # poller user name to login (att uid)
 	server_auth_pass: str=''                    # poller auth password (RSA Token) 
@@ -76,7 +76,8 @@ class FlexLogin():
 
 	def get_output(self, cmd):
 		if not self.conn: return "" 
-		return self.conn.send_command(cmd)
+		op = self.conn.send_command(cmd)
+		return op
 
 	## ~~~~~~~~~~~~~~~~~~~~~~~~ internals ~~~~~~~~~~~~~~~~~~~~~~~~ ##
 
@@ -105,26 +106,6 @@ class FlexLogin():
 	def redispatch(self, device_type):
 		if device_type:
 			redispatch(self.conn, device_type)
-
-	def _connect_vnf_prompts(self, expected_string, enter_string):
-		RETRY_COUNT= 2
-		expected_string_appear = False
-		for x in range(RETRY_COUNT):
-			output = self.read_channel()
-			if expected_string in str(output):
-				self.write_channel(f"{enter_string}\n")
-				sleep(1)
-				expected_string_appear = True
-				break
-			self.write_channel("\n")
-			sleep(1)
-		return expected_string_appear or not enter_string
-
-	def connect_vnf_login_username(self, username):
-		return self._connect_vnf_prompts('login', username)
-
-	def connect_vnf_login_password(self, password):
-		return self._connect_vnf_prompts('assword', password)
 
 
 	## ~~~~~~~~~~~~~~~~~~~~~~~~ Connections ~~~~~~~~~~~~~~~~~~~~~~~~ ##
@@ -198,88 +179,40 @@ class FlexLogin():
 			self.write_debug_log(f"Unable to Connect to device {device}", pfx="[-]")
 			return {'connected': False, 'prompt': False}
 
-	# change device mode to cli mode
-	def change_mode_to_cli(self, device_type='', prompt_delay=2, display_change=False):
-		self.write_debug_log(f"Changing mode to CLI ")
-		self.captured_outputs[self.device]['cli'] = {}
-		current_prompt = self.find_prompt()
-		self.write_channel(f"cli\n")
-		sleep(prompt_delay)
-		output = self.read_channel()
-		self.redispatch(device_type)
-		new_prompt = self.find_prompt()
-		self.write_debug_log(f"Prompt Changed: from {current_prompt} to {new_prompt}")
-		self.write_debug_log(f"mode changed to CLI")
-		return {'connected': True, 'prompt': new_prompt}
-
-	# connect to other sub-device from main devie. tweak delays if need more wait time for next prompt.
-	def connect_device_other(self, login_string, device, username='', password='', device_type='', user_prompt_delay=2, pass_prompt_delay=2, display_change=True):
-		self.device = device
-		self.captured_outputs[device] = {"shell": {}}
-		enter_user, enter_pass = False, False
-		##
-		self.write_debug_log(f"connecting to device via custom string {login_string}")
-		self.write_channel(f"{login_string}\n")
-		sleep(user_prompt_delay)
-		##
-		self.write_debug_log(f"Trying {username} user login")
-		enter_user = self.connect_vnf_login_username(username)
-		##
-		if enter_user: 
-			self.write_debug_log(f"Trying with known password to login")
-			enter_pass = self.connect_vnf_login_password(password)
-			if not enter_pass:
-				self.write_debug_log(f"No Login Password Prompt appeared")
-		else:
-			self.write_debug_log(f"No Login User Prompt appeared")
-		##
-		new_prompt = self.find_prompt()
-		if new_prompt.strip().find("edge") > -1 or new_prompt.strip().find("active") > -1 or new_prompt.strip().find("stand") > -1:
-			self.redispatch(device_type)
-			self.write_debug_log(f"connected to device with custom string {login_string}")
-			return {'connected': True, 'prompt': new_prompt}
-		else:
-			ifconfig_op = self._verify_ifconfig_op_for_velo_vm_connection()
-			if ifconfig_op:
-				new_prompt = self.find_prompt()
-				return {'connected': True, 'prompt': new_prompt}
-			else:
-				self.write_debug_log(f"connection failed to device with custom string {login_string}", pfx="[-]")
-				return {'connected': False, 'prompt': False}
-
-	def _verify_ifconfig_op_for_velo_vm_connection(self):
-		self.write_debug_log(f"connection unidentified, checking ifconfig", pfx="[-]")
-		output_of_ifconfig = self.get_output("ifconfig").splitlines()
-		for line in output_of_ifconfig:
-			if line.startswith("eth"):
-				self.write_debug_log(f"connection was ok, proceeding", pfx="[+]")
-				new_prompt = self.find_prompt()
-				return True
-		return False
 
 	## ~~~~~~~~~~~~~~~~~~~~~~~~ Commands ~~~~~~~~~~~~~~~~~~~~~~~~ ##
 
 	# execute list of commands on active connection
-	def execute_commands(self, cmds, at_prompt, failed_retry=2, increase_read_timeout_by=5):
+	def execute_commands(self, cmds, at_prompt, failed_retry=3, increase_read_timeout_by=5):
 		self.write_debug_log(f"Start Executing list of commands")
 		command_exec_dict = OrderedDict()
 		all_ok = True
 		for cmd in cmds:
-			# _prompt = self.find_prompt()
+			cmd = cmd.strip()
+			if not cmd: continue
 			self.write_debug_log(f"  capturing command: {cmd}")
 			cmd_exec = False
 			for _ in range(failed_retry):
-				try:
-					command_exec_dict[cmd] = self.get_output(cmd)
-					if self.output_file:
-						cmd_output_to_file(cmd, output=command_exec_dict[cmd], file=self.output_file)
-						cmd_output_to_html_file(cmd, output=command_exec_dict[cmd], file=self.output_file_html)
-					self.run_command_evaluator(cmd, command_exec_dict[cmd])
-					cmd_exec = True
-					self.command_exec_summary[cmd] = 'Success'
+				# try:
+				# self.write_debug_log(f"  Trying attempt: {_+1}, timeout = {self.conn.read_timeout_override}")
+				command_exec_dict[cmd] = self.get_output(cmd)
+				if self.output_file:
+					cmd_output_to_file(cmd, output=command_exec_dict[cmd], file=self.output_file)
+					cmd_output_to_html_file(cmd, output=command_exec_dict[cmd], file=self.output_file_html)
+				self.run_command_evaluator(cmd, command_exec_dict[cmd])
+				#
+				if "% Invalid input" in command_exec_dict[cmd] or "'^' marker" in command_exec_dict[cmd] or "command not found" in command_exec_dict[cmd]:
+					cmd_exec = False
 					break
-				except netmiko.exceptions.ReadTimeout:
-					self.conn.read_timeout_override = self.read_timeout_override
+				#
+				cmd_exec = True
+				self.command_exec_summary[cmd] = 'Success'
+				break
+				# except netmiko.exceptions.ReadTimeout:
+				# 	if self.conn.read_timeout_override:
+				# 		self.conn.read_timeout_override += 5
+				# 	else: 
+				# 		self.conn.read_timeout_override = self.read_timeout_override
 			if not cmd_exec:
 				self.command_exec_summary[cmd] = 'Failed'
 				self.write_debug_log(f"  capturing command {cmd}.. failed", pfx="[-]")
@@ -305,6 +238,7 @@ class FlexLogin():
 		self.write_debug_log(f"Exiting out")
 		try:
 			current_prompt = self.find_prompt()
+			self.write_debug_log(f"Exiting from Prompt: {current_prompt}")
 		except:
 			new_prompt = None
 		###			
@@ -318,7 +252,7 @@ class FlexLogin():
 			new_prompt = self.find_prompt()
 		except:
 			new_prompt = None
-		self.write_debug_log(f"Prompt Changed: from {current_prompt} to {new_prompt}")
+		self.write_debug_log(f"Back to Prompt: {new_prompt}")
 
 	# exit out completely.
 	def bye(self, display_change=False):

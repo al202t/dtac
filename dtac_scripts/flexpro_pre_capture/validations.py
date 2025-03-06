@@ -226,6 +226,8 @@ class Interface_Output_Capture_Validations():
 			if not _intf.endswith(ha_port): continue
 			_vlans = { get_digits(v) for v in intf_dict['vlans']}
 			ha_port_vlans = ha_port_vlans.union(_vlans)
+			if self.int_para_dict.get(_intf) and not self.int_para_dict[_intf].get("HA Neighbor"):
+				self.int_para_dict[_intf]['HA Neighbor'] = ''
 			if self.int_para_dict.get(_intf) and self.int_para_dict[_intf].get("HA Neighbor"):
 				ha_port_neighbor = self.int_para_dict[_intf]['HA Neighbor']
 				ha_port_neighbor = ha_port_neighbor.replace("JSW", "JDM")
@@ -256,7 +258,7 @@ class Interface_Output_Capture_Validations():
 		elif other_side_vlans and d['HA Neighbor'] == "N.A.":
 			remark = "Lookout for HA"
 		elif not other_side_vlans and d['HA Neighbor'] != "N.A.":
-			remark = "Lookout WAN VLANS (Identical Found)"
+			remark = "Lookout WAN VLANS (Identical Found)"			
 		return {'Remarks' : remark}
 
 	# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
