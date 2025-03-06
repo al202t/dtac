@@ -198,7 +198,7 @@ def pc_start_executor(obj, i):
 			FCC.output_csv_report_file_col_seq = CSV_REPORT_COLS_SEQ
 			FCC.output_intf_summary_report_file = INTERFACE_SUMMARY_REPORT_FILE_NAME
 			FCC.output_cmds_exec_summary_report_file = CMDS_EXEC_SUMMARY_REPORT_FILE_NAME
-			FCC.max_connections = min(int(i['pc_max_connections']) , 50)
+			FCC.max_connections = min(int(i['pc_max_connections']) , 12)
 			# FCC.display_final_summary = i['pc_fc_summary']
 			# FCC.pc_jcp = i['pc_jcp']
 			# FCC.pc_nmte = i['pc_nmte']

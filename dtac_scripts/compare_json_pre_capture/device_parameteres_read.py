@@ -123,7 +123,7 @@ class DevPara():
 		for line in self.commands_list_dict['show chassis hardware']:
 			if not line.startswith("Chassis "): continue
 			spl = line.strip().split()
-			serial = spl[-2]
+			serial = spl[1]
 			return serial
 
 	def is_junos_available(self):
